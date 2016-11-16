@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.notyet"
+    android:installLocation="auto">
+
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <!-- TODO... runtime permissions for 23+ https://blog.xamarin.com/requesting-runtime-permissions-in-android-marshmallow/ -->
+    <!-- Actually, now I don't think i need permissions... I'm using the default DB location, but allow the system to move the whole app to card. -->
+    <!-- This will include the db -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/MyTheme">
+        <provider
+            android:name=".data.HabitProvider"
+            android:authorities="com.example.notyet" />
+
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CreateActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".HabitActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ActivitySettingsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".HabitActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.HabitActivity" />
+        </activity>
+        <activity
+            android:name=".SortActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".GraphActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".HabitActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.HabitActivity" />
+        </activity>
+        <activity android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.notyet.MainActivity" />
+        </activity>
+    </application>
+
+</manifest>

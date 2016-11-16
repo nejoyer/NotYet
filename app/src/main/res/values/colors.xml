@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--https://color.adobe.com/create/color-wheel/?base=2&rule=Analogous&selected=1&name=My%20Color%20Theme&mode=rgb&rgbvalues=1,0.2503159592124803,0.050000000000000044,0.91,0.5017400834877277,0.04550000000000004,1,0.7639611521565257,0,0.91,0.8953125454895733,0.04550000000000004,0.3540518237444389,1,0.0761885577448762&swatchOrder=0,1,2,3,4-->
+    <color name="colorPrimary">#E8E40C</color>
+    <color name="colorPrimaryDark">#FFC300</color>
+    <color name="colorAccent">#E8800C</color>
+    <color name="colorGood">#5AFF13</color>
+    <color name="colorBad">#FF400D</color>
+
+    <!--https://color.adobe.com/create/color-wheel/?base=2&rule=Analogous&selected=1&name=My%20Color%20Theme&mode=rgb&rgbvalues=0.68,0.1702148522644866,0.03400000000000003,0.5900000000000001,0.3253040101733619,0.029499999999999964,0.68,0.5194935834664375,0,0.5900000000000001,0.5804773646580751,0.029499999999999964,0.24075524014621846,0.68,0.051808219266515826&swatchOrder=0,1,2,3,4-->
+    <color name="colorValues">#965308</color>
+    <color name="colorAvg7">#AD8400</color>
+    <color name="colorAvg30">#969408</color>
+    <color name="colorAvg90">#3DAD0D</color>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_visibility_changed"
+        android:checkable="true"
+        android:icon="@drawable/ic_visibility_black_24dp"
+        android:title="@string/action_visibility_on_label"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_create_new_activity"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="@string/action_create_new_activity_label"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_change_sort"
+        android:title="@string/action_change_sort"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/action_about"
+        app:showAsAction="never"/>
+</menu>

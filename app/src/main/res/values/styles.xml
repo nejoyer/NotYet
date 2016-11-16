@@ -1,0 +1,61 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+    <!--<style name="MyTheme" parent="Theme.AppCompat.Light">-->
+    <style name="MyTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="ListItemStats">
+        <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:gravity">right</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="ListItemDate" parent="ListItemStats">
+        <item name="android:gravity">left</item>
+    </style>
+
+    <!--Styling for the Done/Cancel bar-->
+    <style name="EditEventCustomActionButton" parent="android:style/Widget.Holo.Light.ActionButton">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:focusable">true</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="EditEventCustomActionButtonImage">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">4dp</item>
+    </style>
+    <style name="EditEventCustomActionButtonText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/actionMenuTextAppearance</item>
+        <item name="android:textColor">?android:attr/actionMenuTextColor</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <!--<style name="ActionBarTheme" parent="AppTheme">-->
+        <!--<item name="actionBarStyle">@style/ActionBar.Solid.NotYet.BlackTitle</item>-->
+    <!--</style>-->
+
+    <!--<style name="ActionBar.Solid.NotYet.BlackTitle" parent="@style/Widget.AppCompat.Light.ActionBar">-->
+        <!--&lt;!&ndash;<item name="android:actionMenuTextColor">@android:color/black</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="colorPrimary">@android:color/black</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="titleTextStyle">@android:color/black</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="subtitleTextStyle">@android:color/black</item>&ndash;&gt;-->
+        <!--&lt;!&ndash;<item name="android:titleTextColor">@android:color/black</item>&ndash;&gt;-->
+    <!--</style>-->
+
+
+</resources>

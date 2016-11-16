@@ -1,0 +1,22 @@
+CREATE TABLE activities (_id INTEGER PRIMARY KEY,activity_title TEXT UNIQUE NOT NULL, historical_values REAL NOT NULL, forecast_values REAL NOT NULL, swipe_value REAL NOT NULL, higher_is_better INT(1) NOT NULL, days_to_show INT(1) NOT NULL,best7 REAL NOT NULL,best30 REAL NOT NULL,best90 REAL NOT NULL,sort_priority INT(2) NOT NULL,hide_date INTEGER NOT NULL )
+
+
+CREATE TABLE habitdata (_id INTEGER PRIMARY KEY,activity_id INTEGER NOT NULL, date INTEGER NOT NULL, value REAL NOT NULL, rolling_avg_10 REAL NOT NULL, rolling_avg_30 REAL NOT NULL,rolling_avg_90 REAL NOT NULL, type INTEGER(1) NOT NULL, FOREIGN KEY (activity_id) REFERENCES activities (_id),  UNIQUE (date, activity_id) ON CONFLICT REPLACE)
+
+
+ALTER TABLE activities RENAME TO activities_orig;
+
+CREATE TABLE activities (_id INTEGER PRIMARY KEY,activity_title TEXT UNIQUE NOT NULL, historical_values REAL NOT NULL, forecast_values REAL NOT NULL, swipe_value REAL NOT NULL, higher_is_better INT(1) NOT NULL, days_to_show INT(1) NOT NULL,best7 REAL NOT NULL,best30 REAL NOT NULL,best90 REAL NOT NULL,sort_priority INT(2) NOT NULL,hide_date INTEGER NOT NULL );
+
+INSERT INTO activities(activity_title, historical_values, forecast_values, swipe_value, higher_is_better, days_to_show, best7, best30, best90, sort_priority, hide_date) SELECT activity_title, historical_values, forecast_values, swipe_value, higher_is_better, days_to_show, best10, best30, best90, sort_priority, hide_date FROM activities_orig;
+
+drop table activities_orig;
+
+
+ALTER TABLE habitdata RENAME TO habitdata_orig;
+
+CREATE TABLE habitdata (_id INTEGER PRIMARY KEY,activity_id INTEGER NOT NULL, date INTEGER NOT NULL, value REAL NOT NULL, rolling_avg_7 REAL NOT NULL, rolling_avg_30 REAL NOT NULL,rolling_avg_90 REAL NOT NULL, type INTEGER(1) NOT NULL, FOREIGN KEY (activity_id) REFERENCES activities (_id),  UNIQUE (date, activity_id) ON CONFLICT REPLACE)
+
+INSERT INTO habitdata (activity_id, date, value, rolling_avg_7, rolling_avg_30, rolling_avg_90, type) SELECT activity_id, date, value, rolling_avg_10, rolling_avg_30, rolling_avg_90, type FROM habitdata_orig;
+
+drop table habitdata_orig

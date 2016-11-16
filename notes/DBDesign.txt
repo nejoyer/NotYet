@@ -1,0 +1,151 @@
+Activities
+Id	Title		Hist	Fore	HIB	DTS		best10	best30 	best90	sort_priority 	hide_date
+1	Pushups		60	30	1	1010001		0	0	0	0		0
+
+
+
+HabitData
+ActivityId	Date	Value	10da	30da	90da	Type
+1		123	30	15	30	33.4	1/2/3/4
+
+
+
+MainView:
+Select * from Activities inner join Data on Activites.Id = Data.ActivityId
+
+Where Date = [TODAY]
+
+ActivityView:
+Select * from Activities inner join Data on Activites.Id = Data.ActivityId
+
+Where ActivityId = [ActivityID]
+
+
+http://android-developers.blogspot.com/2013/08/actionbarcompat-and-io-2013-app-source.html
+
+MVP:
+Tablet View
+Help/How To.
+Publishing Data (screen shots and description)
+
+Merchant Account:
+Ads.
+Subscription to remove
+Free trial without ads.
+Website?
+
+TODO:
+Ads?
+Help/How To
+Tablet View?
+Only add activity if all commits... use transaction.
+When forecast changes, update the graph.
+Clean up code.
+Add Comments to each file.
+Move all text to Strings file.
+Add tests.
+Better field validation (enforce numbers)
+
+Complicated patterns? 14 days? days in a month?
+
+swipe right to clear todays swipe left
+
+
+
+Future Improvements:
+more complicated dates... ex. 1x per month, every other week
+Compound activities
+Backup to Google Drive
+Bulk updates
+
+http://stackoverflow.com/questions/9374628/get-sdcard-directory-by-adb
+http://stackoverflow.com/questions/18370219/how-to-use-adb-in-android-studio-to-view-an-sqlite-db
+
+d:
+cd Android\sdk\platform-tools
+
+adb shell date -s SET '%date:~10,4%%date:~4,2%%date:~7,2%.%time:~0,2%%time:~3,2%%time:~6,2%'
+
+adb devices
+adb -s emulator-5554 shell
+cd sdcard/com.example.notyet.data
+cd storage/emulated/0/com.example.notyet.data
+cd data/data/com.example.notyet/databases
+sqlite3 notyet.db
+
+
+Backup:***********************
+d:
+cd Android\sdk\platform-tools
+set dt=%date:~7,2%-%date:~4,2%-%date:~10,4%_%time:~0,2%_%time:~3,2%_%time:~6,2%
+D:\Android\sdk\platform-tools\adb.exe -d shell
+
+run-as com.example.notyet chmod 666 /data/data/com.example.notyet/databases/notyet.db
+
+cp /data/data/com.example.notyet/databases/notyet.db /sdcard/notyet.db
+
+exit
+
+D:\Android\sdk\platform-tools\adb.exe -d pull /sdcard/notyet.db D:\Temp\%dt%notyet.db
+*******************************
+
+D:\Android\sdk\platform-tools\sqlite3.exe d:\Temp\%dt%notyet.db
+
+RESTORE(need to test):------------
+D:\Android\sdk\platform-tools\adb.exe -d push D:\Temp\**********.db /sdcard/notyet.db
+D:\Android\sdk\platform-tools\adb.exe -d shell
+run-as com.example.notyet chmod 666 /data/data/com.example.notyet/databases/notyet.db
+run-as com.example.notyet cp /sdcard/notyet.db /data/data/com.example.notyet/databases/notyet.db 
+---------------------
+
+
+http://stackoverflow.com/questions/17991943/how-to-select-first-n-row-of-each-group
+
+
+select * from activities INNER JOIN habitdata ON activities._id = habitdata.activity_id WHERE date = 2457638
+
+
+SELECT MAX(date) as Date, activity_id, historical_values from activities INNER JOIN habitdata ON activities._id = habitdata.activity_id GROUP BY activity_id;
+
+SELECT MAX(date) as date, activity_id, historical_values from activities INNER JOIN habitdata ON activities._id = habitdata.activity_id GROUP BY activity_id HAVING date != 2457638;
+
+SELECT MAX(rolling_avg_10) as a10, MAX(rolling_avg_30) as a30, MAX(rolling_avg_90) as a90 from habitdata GROUP BY activity_id;
+
+
+Select top 90 for the activity.
+Load them in.
+Continue incrementing until today's date is reached.
+
+
+9
+
+9
+
+
+
+
+
+Graph
+https://github.com/jjoe64/GraphView/blob/master/src/main/java/com/jjoe64/graphview/helper/DateAsXAxisLabelFormatter.java
+https://github.com/jjoe64/GraphView-Demos/blob/master/app/src/main/java/com/jjoe64/graphview_demos/fragments/DateAsXAxis.java
+http://www.android-graphview.org/documentation/how-to-create-a-simple-graph
+
+https://github.com/daimajia/AndroidSwipeLayout
+
+
+http://jasonmcreynolds.com/?p=423
+https://github.com/bauerca/drag-sort-listview/blob/master/library/src/com/mobeta/android/dslv/DragSortCursorAdapter.java
+https://design.google.com/icons
+
+
+select * from Activities where hide_date < 2457673 AND days_to_show & 0000100;
+
+
+http://sqlfiddle.com/
+CREATE TABLE HabitData (_id Integer primary key, activity_id integer, date Integer, value Integer);
+INSERT INTO HabitData (activity_id, date, value) VALUES (17, 2457407, 22);
+INSERT INTO HabitData (activity_id, date, value) VALUES (17, 2457408, 33);
+INSERT INTO HabitData (activity_id, date, value) VALUES (17, 2457409, 44);
+INSERT INTO HabitData (activity_id, date, value) VALUES (18, 2457407, 1);
+INSERT INTO HabitData (activity_id, date, value) VALUES (18, 2457408, 1);
+INSERT INTO HabitData (activity_id, date, value) VALUES (18, 2457409, 1);

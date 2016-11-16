@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">NotYet</string>
+
+    <!--Main menu-->
+    <string name="action_create_new_activity_label">New Activity</string>
+    <string name="action_visibility_on_label">Show All Activities</string>
+    <string name="action_visibility_off_label">Hide Completed Activities</string>
+    <string name="action_change_sort">Change Sort</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+
+    <!--Done Cancel Fragment-->
+    <string name="done_label">Done</string>
+    <string name="cancel_label">Cancel</string>
+
+    <!--Activity Settings-->
+    <string name="activity_title_label">Title</string>
+    <string name="historical_label">Historical</string>
+    <string name="forecast_label">Forecast/Goal</string>
+    <string name="one_swipe_label">Swipe Left Value</string>
+    <string name="higher_is_better_label">Higher is better?</string>
+    <string name="days_to_show_label">Days to show</string>
+
+    <!--Help section-->
+    <string name="help_title">Help:</string>
+    <string name="help_historical">What do you think your daily average was in the past (before starting the app)?\n\nGuess low and you can make easy progress.</string>
+    <string name="help_forecast">What is your daily goal?\n\nThis will be used to project in the future what your averages will look like if you keep it up.</string>
+    <string name="help_swipe">From the main screen, you can swipe to the left. If you do, it will use this value for today and hide the activity for the rest of the day.</string>
+    <string name="help_higher">Is higher better?\n\nEx. Pushups, you want to do more per day. Ex. Soda, you want to do fewer per day.</string>
+    <string name="help_days">Which days of the week should this activity be shown?\n\nEx. If you only want to lift on Mon, Wed, Fri, then just leave those selected and the main page won\'t show Lifting on the other days.</string>
+
+    <!--Main Activity-->
+    <string name="hide_until_tomorrow">Hide this activity until tomorrow</string>
+    <string name="set_value_and_hide_until_tomorrow">Set value and hide until tomorrow</string>
+
+    <!--Habit Activity-->
+    <string name="action_habit_settings">Settings</string>
+    <string name="add_more_history">Tap to add more history.</string>
+    <string name="habit_data_update_title">Updating...</string>
+    <string name="best_label">Best</string>
+    <string name="date_label">Date</string>
+    <string name="val_column_label">Val</string>
+    <string name="a7_column_label">A7</string>
+    <string name="a30_column_label">A30</string>
+    <string name="a90_column_label">A90</string>
+    <string name="today_label">Today</string>
+    <string name="new_value_label">New value:</string>
+
+    <!--Main Settings-->
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_day_change_set">Set</string>
+    <string name="pref_day_change_cancel">Cancel</string>
+    <string name="pref_day_change_label">Time to start a new day</string>
+    <string name="pref_day_change_key">day_change</string>
+    <string name="pref_day_change_default">0</string>
+
+    <!--Text Validation-->
+    <string name="cannot_be_empty">Cannot be empty</string>
+
+    <!--CreateActivity-->
+    <string name="error_creating_activity_title">Error Creating Activity</string>
+    <string name="error_creating_activity_message">Make sure you have a unique title for your activity and all fields are completed.</string>
+
+    <!--AboutActivity-->
+    <string name="about_about_header">About</string>
+    <string name="about_text">This application was made mostly for myself to improve my habits based on a strategy that I think works best.
+        Failing once does not send you back to the beginning... you must get back up and continue to strive to improve. I hope it is useful to you too.</string>
+    <string name="about_attribution_header">Attributions</string>
+    <string name="about_attribution_graph">This application uses:\n
+        &#8226;<a href="http://www.android-graphview.org/">http://www.android-graphview.org/</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.\n
+        &#8226;<a href="https://github.com/daimajia/AndroidSwipeLayout">https://github.com/daimajia/AndroidSwipeLayout</a>. Licensed under <a href="https://github.com/daimajia/AndroidSwipeLayout/blob/master/LICENSE">MIT Liscense</a>.\n
+        &#8226;<a href="https://github.com/bauerca/drag-sort-listview">https://github.com/bauerca/drag-sort-listview</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
+    </string>
+
+    <!--Rare Errors-->
+
+
+</resources>
