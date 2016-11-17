@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/habit_activity_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <include layout="@layout/segment_habit_graph_and_multiselect"
-        android:layout_weight="2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-    <include layout="@layout/segment_habit_listview_and_best"
-        android:layout_weight="3"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-</LinearLayout>
+    <!--<fragment-->
+        <!--android:id="@+id/habit_activity_fragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+    <!--</fragment>-->
+</FrameLayout>

@@ -7,7 +7,6 @@
         android:id="@+id/habit_graph"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="GraphClicked"
         android:visibility="visible"/>
     <LinearLayout
         android:id="@+id/multiselect_value_dialog"
@@ -32,14 +31,14 @@
             android:gravity="center"
             android:orientation="horizontal">
             <Button
+                android:id="@+id/multiselect_cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="MultiSelectCancelClicked"
                 android:text="@android:string/no"/>
             <Button
+                android:id="@+id/multiselect_ok_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="MultiSelectOKClicked"
                 android:text="@android:string/yes"/>
         </LinearLayout>
 

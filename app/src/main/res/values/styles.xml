@@ -45,6 +45,15 @@
         <item name="android:padding">4dp</item>
     </style>
 
+    <style name="MainListViewStyle">
+        <!-- Here it's a stub.  In screens of sufficient width, this style includes modifications
+        for two-pane layout -->
+    </style>
+
+    <style name="SeparatorStyle">
+        <item name="android:background">@android:color/black</item>
+    </style>
+
     <!--<style name="ActionBarTheme" parent="AppTheme">-->
         <!--<item name="actionBarStyle">@style/ActionBar.Solid.NotYet.BlackTitle</item>-->
     <!--</style>-->

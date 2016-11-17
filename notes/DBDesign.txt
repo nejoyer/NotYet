@@ -26,6 +26,7 @@ http://android-developers.blogspot.com/2013/08/actionbarcompat-and-io-2013-app-s
 MVP:
 Tablet View
 Help/How To.
+Testing.
 Publishing Data (screen shots and description)
 
 Merchant Account:
@@ -35,9 +36,10 @@ Free trial without ads.
 Website?
 
 TODO:
-Ads?
 Help/How To
-Tablet View?
+Ads?
+Maintain Scroll pos on HabitActivityFragment
+Up/down arrows, configurable per activity.
 Only add activity if all commits... use transaction.
 When forecast changes, update the graph.
 Clean up code.
@@ -53,6 +55,9 @@ swipe right to clear todays swipe left
 
 
 Future Improvements:
+Add lines in the List view to show where 7,30,90 are.
+Streak.
+Allow vertical pinch?
 more complicated dates... ex. 1x per month, every other week
 Compound activities
 Backup to Google Drive

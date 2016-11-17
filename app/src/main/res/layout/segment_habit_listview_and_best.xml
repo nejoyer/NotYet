@@ -88,15 +88,15 @@
     <View
         android:id="@+id/separator_line_above_footer"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/separator_thickness"
         android:layout_above="@id/habit_data_footer_layout"
-        android:background="@android:color/black" />
+        style="@style/SeparatorStyle" />
     <View
         android:id="@+id/separator_line_below_header"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/separator_thickness"
         android:layout_below="@id/habit_data_header_layout"
-        android:background="@android:color/black" />
+        style="@style/SeparatorStyle" />
 
     <ListView
         android:id="@+id/habit_listview"
