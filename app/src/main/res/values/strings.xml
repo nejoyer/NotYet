@@ -72,7 +72,8 @@
     <string name="about_attribution_graph">This application uses:\n
         &#8226;<a href="http://www.android-graphview.org/">http://www.android-graphview.org/</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.\n
         &#8226;<a href="https://github.com/daimajia/AndroidSwipeLayout">https://github.com/daimajia/AndroidSwipeLayout</a>. Licensed under <a href="https://github.com/daimajia/AndroidSwipeLayout/blob/master/LICENSE">MIT Liscense</a>.\n
-        &#8226;<a href="https://github.com/bauerca/drag-sort-listview">https://github.com/bauerca/drag-sort-listview</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
+        &#8226;<a href="https://github.com/bauerca/drag-sort-listview">https://github.com/bauerca/drag-sort-listview</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.\n
+        &#8226;<a href="https://github.com/douglasjunior/android-simple-tooltip">https://github.com/douglasjunior/android-simple-tooltip</a>. Licensed under <a href="https://github.com/douglasjunior/android-simple-tooltip/blob/master/LICENSE">MIT Liscense</a>.\n
     </string>
 
     <!--Rare Errors-->
