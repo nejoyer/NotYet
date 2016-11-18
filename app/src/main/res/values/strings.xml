@@ -32,6 +32,7 @@
     <!--Main Activity-->
     <string name="hide_until_tomorrow">Hide this activity until tomorrow</string>
     <string name="set_value_and_hide_until_tomorrow">Set value and hide until tomorrow</string>
+    <string name="no_activities_new_user_hero">Click here to start forming a new habit.</string>
 
     <!--Habit Activity-->
     <string name="habit_settings_submenu_title">Activity</string>

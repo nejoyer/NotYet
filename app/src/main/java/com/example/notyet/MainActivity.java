@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import com.example.notyet.data.HabitContract;
 
 import java.util.Calendar;
+
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip;
 
 // Main activity is basically a list of Activities that the user has created that he/she wants to try to improve on.
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, MainMenuFragment.OnFragmentInteractionListener {
@@ -33,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mShowAll = false;
     private final static String POSITION_KEY = "position";
     private int mPosition;
+    private final static String NEW_USER_KEY = "newuser";
+    private boolean mNewUser = true;
 
     private boolean mIsTwoPane = false;
     private static final String HABIT_ACTIVITY_FRAGMENT_TAG = "habit_activity_fragment_tag";
@@ -44,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (savedInstanceState == null) {
             loadMemberVariablesFromPreferences();
 
-                getSupportFragmentManager().beginTransaction()
-                        .add(MainMenuFragment.newInstance(mShowAll), "MainMenuFragment")
-                        .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(MainMenuFragment.newInstance(mShowAll), "MainMenuFragment")
+                    .commit();
         }
         else {
             loadMemberVariablesFromBundle(savedInstanceState);
@@ -126,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mDBDateLastUpdatedTo = savedInstanceState.getLong(DBDATE_LAST_UPDATED_TO_KEY);
         mShowAll = savedInstanceState.getBoolean(SHOW_ALL_KEY);
         mPosition = savedInstanceState.getInt(POSITION_KEY);
+        mNewUser = savedInstanceState.getBoolean(NEW_USER_KEY);
     }
 
     private void loadMemberVariablesFromPreferences()
@@ -133,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
         mDBDateLastUpdatedTo = sharedPref.getLong(DBDATE_LAST_UPDATED_TO_KEY, 0);
         mShowAll = sharedPref.getBoolean(SHOW_ALL_KEY, false);
+        mNewUser = sharedPref.getBoolean(NEW_USER_KEY, true);
     }
 
     @Override
@@ -212,6 +220,44 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 selectionArgs,//SelectionArgs This is taken care of in the provider
                 HabitContract.ActivitiesEntry.COLUMN_SORT_PRIORITY);
     }
+
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if(mActivityAdapter.getCount() < 1 && mNewUser)
+        {
+            mMainListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    View createButton = findViewById(R.id.action_create_new_activity);
+                    new SimpleTooltip.Builder(MainActivity.this)
+                            .anchorView(createButton)
+                            .contentView(R.layout.hero_tooltip, R.id.tooltip_text)
+                            .text(getString(R.string.no_activities_new_user_hero))
+                            .gravity(Gravity.BOTTOM)
+                            .animated(true)
+                            .transparentOverlay(false).onDismissListener(
+                                new SimpleTooltip.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(SimpleTooltip tooltip) {
+                                        mNewUser = false;
+                                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putBoolean(NEW_USER_KEY, mNewUser);
+                                        editor.commit();
+                                    }
+                                }
+                            )
+                            .build()
+                            .show();
+                }
+            }, 500);
+
+        }
+    }
+
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {

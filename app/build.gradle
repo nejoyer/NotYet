@@ -29,6 +29,7 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.jjoe64:graphview:4.2.0'
     compile 'com.vandalsoftware.android:dslv:0.6.3'
+    compile 'com.github.douglasjunior:android-simple-tooltip:0.1.2'
     compile 'com.android.support:recyclerview-v7:24.0.0'
     compile 'com.android.support:support-vector-drawable:23.4.0'
     testCompile 'junit:junit:4.12'
