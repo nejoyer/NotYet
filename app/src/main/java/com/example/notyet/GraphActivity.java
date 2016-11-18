@@ -4,11 +4,14 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.example.notyet.data.HabitContract;
 import com.example.notyet.utilities.GraphUtilities;
@@ -42,6 +45,7 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
     private LineGraphSeries<DataPoint> mAvg30DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
+    private CustomLegendRenderer mCustomLegendRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,33 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
         setTitle(mActivityTitle);
 
         mGraph = (GraphView) findViewById(R.id.graph_graph);
+        mCustomLegendRenderer = new CustomLegendRenderer(mGraph);
+        mGraph.setLegendRenderer(mCustomLegendRenderer);
+
+        // Make it so the user can toggle lines on the graph by clicking on the legend.
+        mGraph.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int i = 0;
+                if(event.getAction() == MotionEvent.ACTION_UP && event.getEventTime()- event.getDownTime() < 500 /* DEFAULT_LONG_PRESS_TIMEOUT */) {
+                    for(CustomLegendRenderer.LegendMapping map : mCustomLegendRenderer.mLegendMapping){
+                        if(map.mSeriesLegendRect.contains(event.getX(), event.getY())) {
+                            if(map.mSeries.getColor() == Color.TRANSPARENT)
+                            {
+                                map.mSeries.setColor(map.mColor);
+                            } else {
+                                map.mColor = map.mSeries.getColor();
+                                map.mSeries.setColor(Color.TRANSPARENT);
+                            }
+                            v.invalidate();
+                            return true;
+                        }
+                        i++;
+                    }
+                }
+                return false;
+            }
+        });
 
         // When the section of the X axis in the viewport is changed, determin if we need "Today" marked on the graph.
         mGraph.getViewport().setOnXAxisBoundsChangedListener(new Viewport.OnXAxisBoundsChangedListener() {
