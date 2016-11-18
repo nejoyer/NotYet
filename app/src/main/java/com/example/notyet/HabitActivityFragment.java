@@ -394,25 +394,26 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
                 break;
             case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
                 mHabitDataAdapter.swapCursor(data);
-
-                DataPoint[] valDataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
-                GraphUtilities.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
-                        valDataPoints[valDataPoints.length - 90].getX(),
-                        mGraph,
-                        mValuesDataSeries,
-                        mAvg7DataSeries,
-                        mAvg30DataSeries,
-                        mAvg90DataSeries,
-                        mTodaySeries);
-                mGraph.getViewport().setScrollable(false);
-                mGraph.getViewport().setScalable(false);
-                mGraph.getViewport().setXAxisBoundsManual(true);
-                mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
-                mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
-                mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
-                mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
-                mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-                GraphUtilities.AddTodayLine(mGraph, mTodaySeries);
+                if(data.getCount() > 0) {
+                    DataPoint[] valDataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
+                    GraphUtilities.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
+                            valDataPoints[valDataPoints.length - 90].getX(),
+                            mGraph,
+                            mValuesDataSeries,
+                            mAvg7DataSeries,
+                            mAvg30DataSeries,
+                            mAvg90DataSeries,
+                            mTodaySeries);
+                    mGraph.getViewport().setScrollable(false);
+                    mGraph.getViewport().setScalable(false);
+                    mGraph.getViewport().setXAxisBoundsManual(true);
+                    mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
+                    mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
+                    mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
+                    mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+                    mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
+                    GraphUtilities.AddTodayLine(mGraph, mTodaySeries);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid id");
