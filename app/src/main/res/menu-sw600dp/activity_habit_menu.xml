@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="@string/habit_settings_submenu_title" android:orderInCategory="1">
+        <menu>
+            <item android:menuCategory="secondary"
+                android:id="@+id/action_habit_settings"
+                android:title="@string/action_habit_settings"
+                app:showAsAction="never"/>
+            <item android:menuCategory="secondary"
+                android:id="@+id/action_habit_delete"
+                android:title="@string/action_habit_delete"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
+</menu>
