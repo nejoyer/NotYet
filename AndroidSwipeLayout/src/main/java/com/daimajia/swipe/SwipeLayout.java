@@ -1373,7 +1373,6 @@ public class SwipeLayout extends FrameLayout {
         open(smooth, true);
     }
 
-    ////TODO remove comments
     public void open(boolean smooth, boolean notify) {
         View surface = getSurfaceView(), bottom = getCurrentBottomView();
         if (surface == null) {

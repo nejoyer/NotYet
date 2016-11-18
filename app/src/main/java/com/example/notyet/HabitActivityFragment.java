@@ -75,7 +75,6 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
     private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
 
-//    private OnFragmentInteractionListener mListener;
 
     // Use newInstance instead of this if possible to avoid missing a param
     public HabitActivityFragment() {
@@ -423,7 +422,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
     private void updateBestData(Cursor data){
         if(data.moveToFirst()) {
             mActivityTitle = data.getString(HabitContract.ActivityBestQueryHelper.COLUMN_ACTIVITY_TITLE);
-            //todo setTitle(mActivityTitle);
+            getActivity().setTitle(mActivityTitle);
             mHigherIsBetter = data.getInt(HabitContract.ActivityBestQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1;
             mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST7)));
             mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)));
@@ -514,43 +513,4 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
             startActivity(intent);
         }
     };
-
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

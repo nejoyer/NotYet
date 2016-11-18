@@ -56,14 +56,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if(findViewById(R.id.right_pane_frame) != null){
             mIsTwoPane = true;
-
-//            if (savedInstanceState == null) {
-//                getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.right_pane, new HabitActivityFragment(), HABIT_ACTIVITY_FRAGMENT_TAG)
-//                        .commit();
-//            }
-
-            //todo select the top activity
         }
 
 

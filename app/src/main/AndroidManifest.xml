@@ -16,13 +16,11 @@
         <provider
             android:name=".data.HabitProvider"
             android:authorities="com.example.notyet" />
-
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -76,5 +74,4 @@
                 android:value="com.example.notyet.MainActivity" />
         </activity>
     </application>
-
 </manifest>
