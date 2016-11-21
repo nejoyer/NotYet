@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.example.notyet.data.HabitContract;
 import com.example.notyet.utilities.CustomNumberFormatter;
+import com.example.notyet.utilities.SwipeOpenListener;
 
 import java.util.ArrayList;
 
@@ -28,10 +29,7 @@ public class ActivityAdapter extends CursorAdapter {
     public View newView(final Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_activity, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-            @Override
-            public void onStartOpen(SwipeLayout layout) {}
-
+        viewHolder.swipeLayout.addSwipeListener(new SwipeOpenListener() {
             @Override
             public void onOpen(SwipeLayout layout) {
                 TagParams tagParams = (TagParams)layout.findViewById(R.id.list_item_title).getTag();
@@ -65,18 +63,6 @@ public class ActivityAdapter extends CursorAdapter {
                 );
                 layout.getContext().getContentResolver().notifyChange(HabitContract.ActivitiesTodaysStatsQueryHelper.buildActivitiesStatsUri(), null);
             }
-
-            @Override
-            public void onStartClose(SwipeLayout layout) {}
-
-            @Override
-            public void onClose(SwipeLayout layout) {}
-
-            @Override
-            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {}
-
-            @Override
-            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {}
         });
         view.setTag(viewHolder);
         return view;

@@ -103,6 +103,9 @@ public class MainMenuFragment extends Fragment {
             case R.id.action_settings:
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
                 return true;
+            case R.id.action_help:
+                startActivity(new Intent(getActivity(), HelpActivity.class));
+                return true;
             case R.id.action_about:
                 startActivity(new Intent(getActivity(), AboutActivity.class));
                 return true;

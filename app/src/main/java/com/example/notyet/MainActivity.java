@@ -7,17 +7,22 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.example.notyet.data.HabitContract;
+import com.example.notyet.utilities.SwipeOpenListener;
 
 import java.util.Calendar;
 
@@ -39,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private int mPosition;
     private final static String NEW_USER_KEY = "newuser";
     private boolean mNewUser = true;
+    private final static String HIDE_HEADER_KEY = "hideheader";
+    private boolean mHideHeader = false;
 
     private boolean mIsTwoPane = false;
     private static final String HABIT_ACTIVITY_FRAGMENT_TAG = "habit_activity_fragment_tag";
@@ -89,8 +96,100 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mMainListView.setAdapter(mActivityAdapter);
 
+        if(!mHideHeader) {
+            mMainListView.addHeaderView(GenerateHelpHeader());
+        }
+
         getSupportLoaderManager().initLoader(HabitContract.ActivitiesTodaysStatsQueryHelper.ACTIVITES_TODAYS_STATS_LOADER, null, this);
     }
+
+    private View GenerateHelpHeader(){
+        final SwipeLayout header = (SwipeLayout) getLayoutInflater().inflate(R.layout.list_item_activity, null);
+        header.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+
+        //This is a bit hacky. But this ensures that the header stays looking like the list items.
+        LinearLayout section7 = (LinearLayout)header.findViewById(R.id.section_7);
+        LinearLayout section7curTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section7curTextAndHelp.setOnClickListener(mHeaderHelpCurrentClicked);
+        TextView section7curText = (TextView)section7.getChildAt(0);
+        section7.removeViewAt(0);
+        section7curTextAndHelp.addView(section7curText, 0);
+        section7.addView(section7curTextAndHelp, 0);
+        LinearLayout section7bestTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section7bestTextAndHelp.setOnClickListener(mHeaderHelpBestClicked);
+        TextView section7bestText = (TextView)section7.getChildAt(1);
+        section7.removeViewAt(1);
+        section7bestTextAndHelp.addView(section7bestText, 0);
+        section7.addView(section7bestTextAndHelp, 1);
+
+        LinearLayout section30 = (LinearLayout)header.findViewById(R.id.section_30);
+        LinearLayout section30curTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section30curTextAndHelp.setOnClickListener(mHeaderHelpCurrentClicked);
+        TextView section30curText = (TextView)section30.getChildAt(0);
+        section30.removeViewAt(0);
+        section30curTextAndHelp.addView(section30curText, 0);
+        section30.addView(section30curTextAndHelp, 0);
+        LinearLayout section30bestTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section30bestTextAndHelp.setOnClickListener(mHeaderHelpBestClicked);
+        TextView section30bestText = (TextView)section30.getChildAt(1);
+        section30.removeViewAt(1);
+        section30bestTextAndHelp.addView(section30bestText, 0);
+        section30.addView(section30bestTextAndHelp, 1);
+
+        LinearLayout section90 = (LinearLayout)header.findViewById(R.id.section_90);
+        LinearLayout section90curTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section90curTextAndHelp.setOnClickListener(mHeaderHelpCurrentClicked);
+        TextView section90curText = (TextView)section90.getChildAt(0);
+        section90.removeViewAt(0);
+        section90curTextAndHelp.addView(section90curText, 0);
+        section90.addView(section90curTextAndHelp, 0);
+        LinearLayout section90bestTextAndHelp = (LinearLayout)getLayoutInflater().inflate(R.layout.main_header_info_button_segment, null);
+        section90bestTextAndHelp.setOnClickListener(mHeaderHelpBestClicked);
+        TextView section90bestText = (TextView)section90.getChildAt(1);
+        section90.removeViewAt(1);
+        section90bestTextAndHelp.addView(section90bestText, 0);
+        section90.addView(section90bestTextAndHelp, 1);
+
+        TextView badBottomText = (TextView)header.findViewById(R.id.bad_bottom_text);
+        badBottomText.setText(getString(R.string.list_item_activity_header_hide));
+        TextView goodBottomText = (TextView)header.findViewById(R.id.good_bottom_text);
+        goodBottomText.setText(getString(R.string.list_item_activity_header_hide));
+        header.removeAllSwipeListener();
+        header.addSwipeListener(new SwipeOpenListener() {
+            @Override
+            public void onOpen(SwipeLayout layout) {
+                mMainListView.removeHeaderView(header);
+                mHideHeader = true;
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean(HIDE_HEADER_KEY, mHideHeader);
+                editor.commit();
+            }
+        });
+
+        return header;
+    }
+
+    private View.OnClickListener mHeaderHelpCurrentClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getString(R.string.help_title))
+                    .setMessage(getString(R.string.main_header_help_current))
+                    .setIcon(R.drawable.ic_dialog_info_with_tint)
+                    .show();
+        }
+    };
+    private View.OnClickListener mHeaderHelpBestClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getString(R.string.help_title))
+                    .setMessage(getString(R.string.main_header_help_best))
+                    .setIcon(R.drawable.ic_dialog_info_with_tint)
+                    .show();
+        }
+    };
 
     public void itemSelected(long activityId, float forecastVal, boolean higherIsBetter, String activityTitle)
     {
@@ -118,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         saveInstanceState.putLong(DBDATE_LAST_UPDATED_TO_KEY, mDBDateLastUpdatedTo);
         saveInstanceState.putBoolean(SHOW_ALL_KEY, mShowAll);
         saveInstanceState.putInt(POSITION_KEY, mPosition);
+        saveInstanceState.putBoolean(NEW_USER_KEY, mNewUser);
+        saveInstanceState.putBoolean(HIDE_HEADER_KEY, mHideHeader);
         super.onSaveInstanceState(saveInstanceState);
     }
 
@@ -133,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mShowAll = savedInstanceState.getBoolean(SHOW_ALL_KEY);
         mPosition = savedInstanceState.getInt(POSITION_KEY);
         mNewUser = savedInstanceState.getBoolean(NEW_USER_KEY);
+        mHideHeader = savedInstanceState.getBoolean(HIDE_HEADER_KEY);
     }
 
     private void loadMemberVariablesFromPreferences()
@@ -141,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mDBDateLastUpdatedTo = sharedPref.getLong(DBDATE_LAST_UPDATED_TO_KEY, 0);
         mShowAll = sharedPref.getBoolean(SHOW_ALL_KEY, false);
         mNewUser = sharedPref.getBoolean(NEW_USER_KEY, true);
+        mHideHeader = sharedPref.getBoolean(HIDE_HEADER_KEY, false);
     }
 
     @Override
