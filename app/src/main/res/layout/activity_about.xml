@@ -23,17 +23,21 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:text="@string/about_text"/>
         <TextView
+            android:id="@+id/about_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:text="@string/about_email"/>
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:text="@string/about_attribution_header"/>
-
         <TextView
-            android:id="@+id/about_attribution_graph"
+            android:id="@+id/about_attribution"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="@string/about_attribution_graph"/>
-
+            android:text="@string/about_attributions"/>
     </LinearLayout>
 </ScrollView>
