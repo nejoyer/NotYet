@@ -4,7 +4,7 @@
     android:id="@+id/activity_graph"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.notyet.GraphActivity">
+    tools:context="com.outlook.notyetapp.GraphActivity">
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph_graph"
         android:layout_width="match_parent"

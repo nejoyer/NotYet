@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.notyet"
+    package="com.outlook.notyetapp"
     android:installLocation="auto">
     <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <!-- TODO... runtime permissions for 23+ https://blog.xamarin.com/requesting-runtime-permissions-in-android-marshmallow/ -->
@@ -13,11 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <provider
-            android:name=".data.HabitProvider"
-            android:authorities="com.example.notyet" />
+            android:name="com.outlook.notyetapp.data.HabitProvider"
+            android:authorities="com.outlook.notyetapp" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.outlook.notyetapp.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,62 +26,62 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateActivity"
+            android:name="com.outlook.notyetapp.CreateActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".HabitActivity"
+            android:name="com.outlook.notyetapp.HabitActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.outlook.notyetapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.MainActivity" />
+                android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
         <activity
-            android:name=".ActivitySettingsActivity"
+            android:name="com.outlook.notyetapp.ActivitySettingsActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".HabitActivity">
+            android:parentActivityName="com.outlook.notyetapp.HabitActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.HabitActivity" />
+                android:value="com.outlook.notyetapp.HabitActivity" />
         </activity>
         <activity
-            android:name=".SortActivity"
+            android:name="com.outlook.notyetapp.SortActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.outlook.notyetapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.MainActivity" />
+                android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.outlook.notyetapp.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.outlook.notyetapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.MainActivity" />
+                android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
         <activity
-            android:name=".GraphActivity"
+            android:name="com.outlook.notyetapp.GraphActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".HabitActivity">
+            android:parentActivityName="com.outlook.notyetapp.HabitActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.HabitActivity" />
+                android:value="com.outlook.notyetapp.HabitActivity" />
         </activity>
-        <activity android:name=".HelpActivity"
+        <activity android:name="com.outlook.notyetapp.HelpActivity"
             android:label="@string/help_activity_title"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.outlook.notyetapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.MainActivity" />
+                android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name="com.outlook.notyetapp.AboutActivity"
             android:label="@string/about_activity_title"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="com.outlook.notyetapp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.notyet.MainActivity" />
+                android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
     </application>
 

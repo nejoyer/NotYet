@@ -1,5 +1,5 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.example.notyet.utilities.TimePreference
+    <com.outlook.notyetapp.utilities.TimePreference
         android:title="@string/pref_day_change_label"
         android:key="@string/pref_day_change_key"
         android:defaultValue="@string/pref_day_change_default"

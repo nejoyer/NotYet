@@ -8,13 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.notyet.ActivitySettingsActivity">
+    tools:context="com.outlook.notyetapp.ActivitySettingsActivity">
     <!--Added the fragment programmatically so that I can have a
         programmatic reference-->
-    <!--<fragment-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:id="@+id/create_activity_settings_fragment"-->
-    <!--android:name="com.example.notyet.ActivitySettingsFragment"-->
-    <!--tools:layout="@layout/activity_settings_fragment" />-->
 </ScrollView>
