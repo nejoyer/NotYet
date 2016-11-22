@@ -43,6 +43,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class HabitActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, HabitDataAdapter.ChecksChangedListener{
 
@@ -395,7 +396,8 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
             case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
                 mHabitDataAdapter.swapCursor(data);
                 if(data.getCount() > 0) {
-                    DataPoint[] valDataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
+                    List<DataPoint[]> dataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
+                    DataPoint[] valDataPoints = dataPoints.get(0);
                     GraphUtilities.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
                             valDataPoints[valDataPoints.length - 90].getX(),
                             mGraph,

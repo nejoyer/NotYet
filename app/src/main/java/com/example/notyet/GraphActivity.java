@@ -22,6 +22,14 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 // When you tap on the graph in the HabitActivity, you come to this full screen graph activity
 public class GraphActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -46,6 +54,10 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
     private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
     private CustomLegendRenderer mCustomLegendRenderer;
+
+    private HashMap<LineGraphSeries<DataPoint>, DataPoint[]> hiddenSeries = new HashMap<LineGraphSeries<DataPoint>, DataPoint[]>() {};
+    private HashMap<LineGraphSeries<DataPoint>, DataPoint[]> visibleSeries = new HashMap<LineGraphSeries<DataPoint>, DataPoint[]>() {};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +88,7 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
                 if(event.getAction() == MotionEvent.ACTION_UP && event.getEventTime()- event.getDownTime() < 500 /* DEFAULT_LONG_PRESS_TIMEOUT */) {
                     for(CustomLegendRenderer.LegendMapping map : mCustomLegendRenderer.mLegendMapping){
                         if(map.mSeriesLegendRect.contains(event.getX(), event.getY())) {
-                            if(map.mSeries.getColor() == Color.TRANSPARENT)
-                            {
-                                map.mSeries.setColor(map.mColor);
-                            } else {
-                                map.mColor = map.mSeries.getColor();
-                                map.mSeries.setColor(Color.TRANSPARENT);
-                            }
-                            v.invalidate();
+                            toggleSeries(map);
                             return true;
                         }
                         i++;
@@ -110,6 +115,35 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
         getSupportLoaderManager().initLoader(HabitContract.HabitDataQueryHelper.GRAPHDATA_LOADER, null, this);
     }
 
+    private void toggleSeries(CustomLegendRenderer.LegendMapping map)
+    {
+        if(map.mSeries.getColor() == Color.TRANSPARENT) {
+            DataPoint[] data = hiddenSeries.remove(map.mSeries);
+            if(data != null) {
+                map.mSeries.resetData(data);
+            }
+            map.mSeries.setColor(map.mColor);
+            visibleSeries.put(map.mSeries, data);
+        } else {
+            DataPoint[] realData = visibleSeries.remove(map.mSeries);
+            hiddenSeries.put(map.mSeries, realData);
+
+            if(visibleSeries.size() > 0) {
+                Map.Entry<LineGraphSeries<DataPoint>, DataPoint[]> entry = visibleSeries.entrySet().iterator().next();
+                DataPoint[] fakeData = entry.getValue();
+                for(LineGraphSeries<DataPoint> series: hiddenSeries.keySet())
+                {
+                    series.resetData(fakeData);
+                }
+            }
+            map.mColor = map.mSeries.getColor();
+            map.mSeries.setColor(Color.TRANSPARENT);
+        }
+        mGraph.removeSeries(mTodaySeries);
+        mGraph.invalidate();
+        GraphUtilities.AddTodayLine(mGraph, mTodaySeries);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id){
@@ -130,8 +164,14 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
         switch (loader.getId())
         {
             case HabitContract.HabitDataQueryHelper.GRAPHDATA_LOADER:
-                DataPoint[] valDataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
+                List<DataPoint[]> dataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
 
+                visibleSeries.put(mValuesDataSeries, dataPoints.get(0));
+                visibleSeries.put(mAvg7DataSeries, dataPoints.get(1));
+                visibleSeries.put(mAvg30DataSeries, dataPoints.get(2));
+                visibleSeries.put(mAvg90DataSeries, dataPoints.get(3));
+
+                DataPoint[] valDataPoints = dataPoints.get(0);
                 if(mMinX == 0 && mMaxX == 0){
                     mMinX = valDataPoints[valDataPoints.length - 180].getX();
                     mMaxX = valDataPoints[valDataPoints.length - 90].getX();

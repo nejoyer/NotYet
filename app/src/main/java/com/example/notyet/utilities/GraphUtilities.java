@@ -14,7 +14,10 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 // Code shared between HabitActivity and GraphActivity relating to graph manipulation.
 public class GraphUtilities {
@@ -38,12 +41,12 @@ public class GraphUtilities {
         graph.addSeries(todaySeries);
     }
 
-    public static DataPoint[] UpdateSeriesData(Cursor data,
-                                               float forecastVal,
-                                 LineGraphSeries<DataPoint> valuesDataSeries,
-                                 LineGraphSeries<DataPoint> avg7DataSeries,
-                                 LineGraphSeries<DataPoint> avg30DataSeries,
-                                 LineGraphSeries<DataPoint> avg90DataSeries){
+    public static List<DataPoint[]> UpdateSeriesData(Cursor data,
+                                                         float forecastVal,
+                                                         LineGraphSeries<DataPoint> valuesDataSeries,
+                                                         LineGraphSeries<DataPoint> avg7DataSeries,
+                                                         LineGraphSeries<DataPoint> avg30DataSeries,
+                                                         LineGraphSeries<DataPoint> avg90DataSeries){
 
         int cursorCount = data.getCount();
         int dataPointCount = cursorCount + 90; // We want room for 90 days of forecasts
@@ -87,13 +90,14 @@ public class GraphUtilities {
             avg90Points[j] = new DataPoint(dataPointDate, rollingAverageHelper.GetAverage90());
         }
 
+        List<DataPoint[]> toRet = Arrays.asList(dataPoints, avg7Points, avg30Points, avg90Points);
         valuesDataSeries.resetData(dataPoints);
         avg7DataSeries.resetData(avg7Points);
         avg30DataSeries.resetData(avg30Points);
         avg90DataSeries.resetData(avg90Points);
 
         // return the data points for one of the series. This is used to figure out what to set as the initial X axis. Doesn't matter which series.
-        return dataPoints;
+        return toRet;
     }
 
     // Add the series to the graph and zoom the x axis as specified (presumably to show the last 90 days.
