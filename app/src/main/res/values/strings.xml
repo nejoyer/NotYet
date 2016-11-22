@@ -44,7 +44,7 @@
     <string name="list_item_activity_best_A30">B30</string>
     <string name="list_item_activity_best_A90">B90</string>
     <string name="main_header_help_current">A7 is the average of the last 7 days including today.\nA30 is the average of the last 30 days including today.\nA90 is the average of the last 90 days including today.</string>
-    <string name="main_header_help_best">B7 best A7 you have ever gotten.\nB30 best A30 you have ever gotten.\nB90 best A90 you have ever gotten.</string>
+    <string name="main_header_help_best">B7 is the best A7 you have ever gotten.\nB30 is the best A30 you have ever gotten.\nB90 is the best A90 you have ever gotten.</string>
     <string name="no_activities_new_user_hero">Click here to start forming a new habit.</string>
 
 
