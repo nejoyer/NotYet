@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.utilities.EULAUtils;
 import com.outlook.notyetapp.utilities.SwipeOpenListener;
 
 import java.util.Calendar;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean mNewUser = true;
     private final static String HIDE_HEADER_KEY = "hideheader";
     private boolean mHideHeader = false;
+    public final static String EULA_KEY = "eula";
+    public String mEulaAgreedDate = "January 1, 2000";
 
     private boolean mIsTwoPane = false;
     private static final String HABIT_ACTIVITY_FRAGMENT_TAG = "habit_activity_fragment_tag";
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         else {
             loadMemberVariablesFromBundle(savedInstanceState);
         }
+        EULAUtils.ShowEULAIfNecessary(this, mEulaAgreedDate);
 
         setContentView(R.layout.activity_main);
 
@@ -219,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         saveInstanceState.putInt(POSITION_KEY, mPosition);
         saveInstanceState.putBoolean(NEW_USER_KEY, mNewUser);
         saveInstanceState.putBoolean(HIDE_HEADER_KEY, mHideHeader);
+        saveInstanceState.putString(EULA_KEY, mEulaAgreedDate);
         super.onSaveInstanceState(saveInstanceState);
     }
 
@@ -235,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mPosition = savedInstanceState.getInt(POSITION_KEY);
         mNewUser = savedInstanceState.getBoolean(NEW_USER_KEY);
         mHideHeader = savedInstanceState.getBoolean(HIDE_HEADER_KEY);
+        mEulaAgreedDate = savedInstanceState.getString(EULA_KEY, getString(R.string.date_last_agreed));
     }
 
     private void loadMemberVariablesFromPreferences()
@@ -244,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mShowAll = sharedPref.getBoolean(SHOW_ALL_KEY, false);
         mNewUser = sharedPref.getBoolean(NEW_USER_KEY, true);
         mHideHeader = sharedPref.getBoolean(HIDE_HEADER_KEY, false);
+        mEulaAgreedDate = sharedPref.getString(EULA_KEY, getString(R.string.date_last_agreed));
     }
 
     @Override

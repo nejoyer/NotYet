@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eula_title">End­User License Agreement ("Agreement")</string>
+    <string name="eula_date_updated_label">Last updated: </string>
+    <string name="eula_date_updated">November 29, 2016</string>
+    <string name="date_last_agreed">January 1, 2000</string>
+    <string name="eula_agree">I Agree</string>
+    <string name="eula_cancel">I Disagree</string>
+    <string name="eula_content">
+Please read this End­User License Agreement ("Agreement") carefully before clicking the "I Agree" button, downloading or using NotYet ("Application").
+\nBy clicking the "I Agree" button, downloading or using the Application, you are agreeing to be bound by the terms and conditions of this Agreement.
+\nIf you do not agree to the terms of this Agreement, do not click on the "I Agree" button and do not download or use the Application.
+\n
+\nLicense
+\nThe creator of the Application grants you a revocable, non­exclusive, non­transferable, limited license to download, install and use the Application solely for your personal, non­commercial purposes strictly in accordance with the terms of this Agreement.
+\n
+\nRestrictions
+\nYou agree not to, and you will not permit others to:
+\na) license, sell, rent, lease, assign, distribute, transmit, host, outsource, disclose or otherwise commercially exploit the Application or make the Application available to any third party.
+\n
+\nModifications to Application
+\nThe creator of the Application reserves the right to modify, suspend or discontinue, temporarily or permanently, the Application or any service to which it connects, with or without notice and without liability to you.
+\n
+\nTerm and Termination
+\nThis Agreement shall remain in effect until terminated by you or the creator of the Application.
+\n
+\nThe creator of the Application may, in its sole discretion, at any time and for any or no reason, suspend or terminate this Agreement with or without prior notice.
+\n
+\nThis Agreement will terminate immediately, without prior notice from the creator of the Application, in the event that you fail to comply with any provision of this Agreement. You may also terminate this Agreement by deleting the Application and all copies thereof from all of your hardware devices.
+\n
+\nUpon termination of this Agreement, you shall cease all use of the Application and delete all copies of the Application from your mobile device or from your desktop.
+\n
+\nExport Restrictions
+\nThe Application may be subject to export controls or restrictions by the United States or other countries or territories. You agree to comply with all applicable U.S. and international export laws and regulations. These laws include restrictions on destinations, end users, and end use.
+\n
+\nDisclaimer of Warranties
+\nYou expressly understand and agree that your use of the Application is at your sole discretion and risk and that the Application is provided as is and as available without warranty of any kind.
+\nYou are solely responsible for any damage to your mobile device, or other device, or loss of data that results from such use.
+\nThe creator of the Application further expressly disclaims all warranties and conditions of any kind, whether express or implied, including, but not limited to the implied warranties and conditions of merchantability, fitness for a particular purpose and non-infringement, with respect to the Application.
+\nThe Application is not intended for use in the operation of nuclear facilities, life support systems, emergency communications, aircraft navigation or communication systems, air traffic control systems, or any other activities in which the failure of the application could lead to death, personal injury, or severe physical or environmental damage.
+\n
+\nLimitation of Liability
+\nYou expressly understand and agree that the creator of the Application is not liable to you under any theory of liability for any direct, indirect, incidental, special consequential or exemplary damages that may be incurred by you through your use of the application, including any loss of data or damage to your mobile device, whether or not the creator of the Application or his representatives have been advised of or should have been aware of the possibility of any such losses arising.
+\n
+\nSeverability
+\nIf any provision of this Agreement is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law and the remaining provisions will continue in full force and effect.
+\n
+\nAmendments to this Agreement
+\nThe creator of the Application reserves the right, at its sole discretion, to modify or replace this Agreement at any time. If a revision is material we will provide at least 30 (changes this) days\' notice prior to any new terms taking effect. What constitutes a material change will be determined at the creator of the Applications sole discretion.
+\n
+\nContact Information
+\nIf you have any questions about this Agreement, please contact us.</string>
+</resources>
