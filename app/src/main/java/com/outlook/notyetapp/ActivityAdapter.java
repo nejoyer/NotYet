@@ -95,55 +95,20 @@ public class ActivityAdapter extends CursorAdapter {
 
         int goodColor = ContextCompat.getColor(context, R.color.colorGood);
         int badColor = ContextCompat.getColor(context, R.color.colorBad);
+        float goal = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_FORECAST);
 
-
-        float avg7= cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_7);
+        float avg7 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_7);
         float best7 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST7);
-        if(higherIsBetter) {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg7)) >= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best7))) {
-                viewHolder.section7.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section7.setBackgroundColor(badColor);
-            }
-        }else {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg7)) <= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best7))) {
-                viewHolder.section7.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section7.setBackgroundColor(badColor);
-            }
-        }
+
+        setBackgroundColorOnView(viewHolder.section7, higherIsBetter, avg7, best7, goal, goodColor, badColor);
 
         float avg30 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_30);
         float best30 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST30);
-        if(higherIsBetter) {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg30)) >= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best30))) {
-                viewHolder.section30.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section30.setBackgroundColor(badColor);
-            }
-        } else {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg30)) <= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best30))) {
-                viewHolder.section30.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section30.setBackgroundColor(badColor);
-            }
-        }
+        setBackgroundColorOnView(viewHolder.section30, higherIsBetter, avg7, best7, goal, goodColor, badColor);
 
         float avg90 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_90);
         float best90 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST90);
-        if(higherIsBetter) {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg90)) >= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best90))) {
-                viewHolder.section90.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section90.setBackgroundColor(badColor);
-            }
-        } else {
-            if (Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg90)) <= Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best90))) {
-                viewHolder.section90.setBackgroundColor(goodColor);
-            } else {
-                viewHolder.section90.setBackgroundColor(badColor);
-            }
-        }
+        setBackgroundColorOnView(viewHolder.section90, higherIsBetter, avg7, best7, goal, goodColor, badColor);
 
         viewHolder.avg7View.setText(CustomNumberFormatter.formatToThreeCharacters(avg7));
         viewHolder.best7View.setText(CustomNumberFormatter.formatToThreeCharacters(best7));
@@ -151,6 +116,29 @@ public class ActivityAdapter extends CursorAdapter {
         viewHolder.best30View.setText(CustomNumberFormatter.formatToThreeCharacters(best30));
         viewHolder.avg90View.setText(CustomNumberFormatter.formatToThreeCharacters(avg90));
         viewHolder.best90View.setText(CustomNumberFormatter.formatToThreeCharacters(best90));
+    }
+
+    // if your average is equal to your best average or better than your goal, we show green; otherwise red.
+    private void setBackgroundColorOnView(View view, boolean higherIsBetter, float avg, float best, float goal, int goodColor, int badColor){
+        // We only determine color based on what the user will see.
+        float avg3 = Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(avg));
+        float best3 = Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(best));
+        float goal3 = Float.valueOf(CustomNumberFormatter.formatToThreeCharacters(goal));
+
+        if(higherIsBetter) {
+            if (avg3 >= best3 || avg3 >= goal3) {
+                view.setBackgroundColor(goodColor);
+            } else {
+                view.setBackgroundColor(badColor);
+            }
+        }else {
+            if (avg3 <= best3 || avg3 <= goal3) {
+                view.setBackgroundColor(goodColor);
+            } else {
+                view.setBackgroundColor(badColor);
+            }
+        }
+
     }
 
     private static class ViewHolder {
