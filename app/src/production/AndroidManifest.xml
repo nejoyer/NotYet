@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.outlook.notyetapp">
+
+    <application>
+        <provider
+            android:name="com.outlook.notyetapp.data.HabitProvider"
+            android:authorities="com.outlook.notyetapp" />
+    </application>
+
+</manifest>
