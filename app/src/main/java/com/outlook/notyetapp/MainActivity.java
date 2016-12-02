@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.outlook.notyetapp.data.DBHelper;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.utilities.EULAUtils;
 import com.outlook.notyetapp.utilities.SwipeOpenListener;
@@ -58,6 +59,33 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
+
+            final Thread.UncaughtExceptionHandler oldHandler =
+                    Thread.getDefaultUncaughtExceptionHandler();
+
+            //top level error handling
+            Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(Thread thread, Throwable ex) {
+                    if(ex.getCause() != null && ex.getCause().getMessage() != null && ex.getCause().getMessage().compareTo(DBHelper.DOWNGRADE_NOT_SUPPORTED) == 0)
+                    {
+                        Intent intent = new Intent(MainActivity.this, ErrorActivity.class);
+                        intent.putExtra(ErrorActivity.ERROR_MESSAGE_KEY, getString(R.string.downgrade_not_allowed));
+                        MainActivity.this.startActivity(intent);
+                    } else {
+
+                        if (oldHandler != null) {
+                            oldHandler.uncaughtException(
+                                    thread,
+                                    ex
+                            ); //Delegates to Android's error handling
+                        } else {
+                            System.exit(2); //Prevents the service/app from freezing
+                        }
+                    }
+                }
+            });
+
             loadMemberVariablesFromPreferences();
 
             getSupportFragmentManager().beginTransaction()

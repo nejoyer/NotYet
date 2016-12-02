@@ -48,7 +48,6 @@
     <string name="no_activities_new_user_hero">Click here to start forming a new habit.</string>
 
 
-
     <!--Habit Activity-->
     <string name="habit_settings_submenu_title">Activity</string>
     <string name="action_habit_settings">Settings</string>
@@ -153,6 +152,7 @@
     </string>
 
     <!--Rare Errors-->
-
+    <string name="unexpected_error">Unexpected Error:</string>
+    <string name="downgrade_not_allowed">Downgrading to an older version is not allowed. Please revert back to the current version.</string>
 
 </resources>
