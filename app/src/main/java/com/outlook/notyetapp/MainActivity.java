@@ -380,6 +380,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mActivityAdapter.swapCursor(data);
 
         if(mIsTwoPane && data.getCount() > 1 && mMainListView.getCheckedItemPosition() < 0) {
+            if(mPosition == 0 && !mHideHeader)
+            {
+                mPosition = 1;
+            }
             mMainListView.smoothScrollToPosition(mPosition);
             mMainListView.post(new Runnable() {
                 @Override
