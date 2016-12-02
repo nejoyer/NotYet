@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         {
             TextView rightPaneTitle = (TextView)findViewById(R.id.right_pane_title);
             rightPaneTitle.setText(activityTitle);
-            HabitActivityFragment fragment = HabitActivityFragment.newInstance(activityId, forecastVal, higherIsBetter);
+            HabitActivityFragment fragment = HabitActivityFragment.newInstance(activityId, forecastVal, higherIsBetter, mIsTwoPane);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.right_pane_frame, fragment, HABIT_ACTIVITY_FRAGMENT_TAG)
                     .commit();

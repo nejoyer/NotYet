@@ -48,10 +48,12 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
     public static final String ACTIVITY_ID_KEY = "activity_id";
     public static final String ACTIVITY_FORECAST_KEY = "activity_forecast";
     public static final String ACTIVITY_HIGHER_IS_BETTER_KEY = "higher_is_better_key";
+    public static final String IS_TWO_PANE = "is_two_pane";
 
     public long mActivityId = -99;
     public float mForecast;
     public boolean mHigherIsBetter;
+    public boolean mIsTwoPane;
     public String mActivityTitle;
 
     private ListView mHabitDataListView;
@@ -80,12 +82,13 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
         // Required empty public constructor
     }
 
-    public static HabitActivityFragment newInstance(long activityId, float forecastVal, boolean higherIsBetter) {
+    public static HabitActivityFragment newInstance(long activityId, float forecastVal, boolean higherIsBetter, boolean isTwoPane) {
         HabitActivityFragment fragment = new HabitActivityFragment();
         Bundle args = new Bundle();
         args.putLong(ACTIVITY_ID_KEY, activityId);
         args.putFloat(ACTIVITY_FORECAST_KEY, forecastVal);
         args.putBoolean(ACTIVITY_HIGHER_IS_BETTER_KEY, higherIsBetter);
+        args.putBoolean(IS_TWO_PANE, isTwoPane);
         fragment.setArguments(args);
         return fragment;
     }
@@ -104,6 +107,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
             mActivityId = getArguments().getLong(ACTIVITY_ID_KEY);
             mForecast = getArguments().getFloat(ACTIVITY_FORECAST_KEY);
             mHigherIsBetter = getArguments().getBoolean(ACTIVITY_HIGHER_IS_BETTER_KEY);
+            mIsTwoPane = getArguments().getBoolean(IS_TWO_PANE);
         }
         setHasOptionsMenu(true);
     }
@@ -423,7 +427,9 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
     private void updateBestData(Cursor data){
         if(data.moveToFirst()) {
             mActivityTitle = data.getString(HabitContract.ActivityBestQueryHelper.COLUMN_ACTIVITY_TITLE);
-            getActivity().setTitle(mActivityTitle);
+            if(!mIsTwoPane) {
+                getActivity().setTitle(mActivityTitle);
+            }
             mHigherIsBetter = data.getInt(HabitContract.ActivityBestQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1;
             mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST7)));
             mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)));
