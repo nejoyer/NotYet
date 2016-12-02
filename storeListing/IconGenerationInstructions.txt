@@ -1,0 +1,10 @@
+https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html
+Use Arrow.png from storeListing directory.
+Padding 10%
+Color 0%
+Center
+Square
+Long Shadow
+
+
+For Demo version, use blue 100% foreground
