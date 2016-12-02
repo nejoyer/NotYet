@@ -146,6 +146,20 @@ public class HabitProvider extends ContentProvider {
                         sortOrder);
                 break;
             }
+            // commented out because it is not used right now.
+            // content://com.outlook.notyetapp/habitdata
+//            case HabitContract.HABITDATA_ENTRIES: {
+//                retCursor = mDBHelper.getReadableDatabase().query(
+//                        HabitContract.HabitDataEntry.TABLE_NAME,
+//                        projection,
+//                        selection,
+//                        selectionArgs,
+//                        null, //group by
+//                        null, //having
+//                        sortOrder
+//                );
+//                break;
+//            }
             // commented this out so it results in unsupported...
             // content://com.outlook.notyetapp/habitdata/#
             //case HabitContract.HABITDATA_ENTRY: {
