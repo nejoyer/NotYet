@@ -99,16 +99,15 @@ public class ActivityAdapter extends CursorAdapter {
 
         float avg7 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_7);
         float best7 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST7);
-
         setBackgroundColorOnView(viewHolder.section7, higherIsBetter, avg7, best7, goal, goodColor, badColor);
 
         float avg30 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_30);
         float best30 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST30);
-        setBackgroundColorOnView(viewHolder.section30, higherIsBetter, avg7, best7, goal, goodColor, badColor);
+        setBackgroundColorOnView(viewHolder.section30, higherIsBetter, avg30, best30, goal, goodColor, badColor);
 
         float avg90 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_ROLLING_AVG_90);
         float best90 = cursor.getFloat(HabitContract.ActivitiesTodaysStatsQueryHelper.COLUMN_BEST90);
-        setBackgroundColorOnView(viewHolder.section90, higherIsBetter, avg7, best7, goal, goodColor, badColor);
+        setBackgroundColorOnView(viewHolder.section90, higherIsBetter, avg90, best90, goal, goodColor, badColor);
 
         viewHolder.avg7View.setText(CustomNumberFormatter.formatToThreeCharacters(avg7));
         viewHolder.best7View.setText(CustomNumberFormatter.formatToThreeCharacters(best7));
