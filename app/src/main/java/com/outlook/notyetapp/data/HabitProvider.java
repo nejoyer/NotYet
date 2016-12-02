@@ -42,21 +42,21 @@ public class HabitProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher(){
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-        // URI content://com.outlook.notyetapp.app/activities/#
+        // URI content://com.outlook.notyetapp/activities/#
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY,HabitContract.PATH_ACTIVITIES + "/#", HabitContract.ACTIVITY);
-        // URI content://com.outlook.notyetapp.app/activities
+        // URI content://com.outlook.notyetapp/activities
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY, HabitContract.PATH_ACTIVITIES, HabitContract.ACTIVITIES);
-        // URI content://com.outlook.notyetapp.app/activities/#/stats
+        // URI content://com.outlook.notyetapp/activities/#/stats
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY,HabitContract.PATH_ACTIVITIES + "/#/" + HabitContract.PATH_STATS, HabitContract.ACTIVITY_STATS);
-        // URI content://com.outlook.notyetapp.app/activities/stats
+        // URI content://com.outlook.notyetapp/activities/stats
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY, HabitContract.PATH_ACTIVITIES + "/" + HabitContract.PATH_STATS, HabitContract.ACTIVITIES_TODAYS_STATS);
-        // URI content://com.outlook.notyetapp.app/activities/mostrecent
+        // URI content://com.outlook.notyetapp/activities/mostrecent
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY, HabitContract.PATH_ACTIVITIES + "/" + HabitContract.PATH_RECENT, HabitContract.ACTIVITIES_MOST_RECENT);
-        // URI content://com.outlook.notyetapp.app/habitdata/#
+        // URI content://com.outlook.notyetapp/habitdata/#
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY, HabitContract.PATH_HABIT_DATA + "/#", HabitContract.HABITDATA_ENTRY);
-        // URI content://com.outlook.notyetapp.app/habitdata
+        // URI content://com.outlook.notyetapp/habitdata
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY, HabitContract.PATH_HABIT_DATA, HabitContract.HABITDATA_ENTRIES);
-        // URI content://com.outlook.notyetapp.app/activities/#/habitdata
+        // URI content://com.outlook.notyetapp/activities/#/habitdata
         uriMatcher.addURI(HabitContract.CONTENT_AUTHORITY,
                 HabitContract.PATH_ACTIVITIES + "/#/" + HabitContract.PATH_HABIT_DATA,
                 HabitContract.ACTIVITY_HABITDATA_ENTRIES);
@@ -101,17 +101,16 @@ public class HabitProvider extends ContentProvider {
                         String sortOrder) {
         Cursor retCursor = null;
         switch (sUriMatcher.match(uri)) {
-            // content://com.outlook.notyetapp.app/activities/#
+            // content://com.outlook.notyetapp/activities/#
             case HabitContract.ACTIVITY:
             {
                 //Note, here we ignore the user's selection and selection args in favor of our own which is what this Uri is intended for.
                 retCursor = getActivity(uri, projection, sortOrder);
                 break;
             }
-            // content://com.outlook.notyetapp.app/activities
+            // content://com.outlook.notyetapp/activities
             case HabitContract.ACTIVITIES:
             {
-                //Note, here we ignore the user's selection and selection args in favor of our own which is what this Uri is intended for.
                 retCursor = mDBHelper.getReadableDatabase().query(
                         HabitContract.ActivitiesEntry.TABLE_NAME,
                         projection,
@@ -123,7 +122,7 @@ public class HabitProvider extends ContentProvider {
                 );
                 break;
             }
-            // content://com.outlook.notyetapp.app/activities/stats
+            // content://com.outlook.notyetapp/activities/stats
             case HabitContract.ACTIVITIES_TODAYS_STATS:
             {
                 retCursor = activitiesHabitDataJoinQueryBuilder.query(mDBHelper.getReadableDatabase(),
@@ -135,7 +134,7 @@ public class HabitProvider extends ContentProvider {
                         sortOrder);
                 break;
             }
-            // content://com.outlook.notyetapp.app/activities/mostrecent
+            // content://com.outlook.notyetapp/activities/mostrecent
             case HabitContract.ACTIVITIES_MOST_RECENT: {
                 long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getContext().getString(R.string.pref_day_change_key), "0"));
                 retCursor = activitiesHabitDataJoinQueryBuilder.query(mDBHelper.getReadableDatabase(),
@@ -148,11 +147,11 @@ public class HabitProvider extends ContentProvider {
                 break;
             }
             // commented this out so it results in unsupported...
-            // content://com.outlook.notyetapp.app/habitdata/#
+            // content://com.outlook.notyetapp/habitdata/#
             //case HabitContract.HABITDATA_ENTRY: {
             //    break;
             //}
-            // content://com.outlook.notyetapp.app/activities/#/stats
+            // content://com.outlook.notyetapp/activities/#/stats
             case HabitContract.ACTIVITY_STATS: {
                 long activityId = HabitContract.ActivitiesEntry.getActivityNumberFromUri(uri);
                 retCursor = mDBHelper.getReadableDatabase()
@@ -166,7 +165,7 @@ public class HabitProvider extends ContentProvider {
                                 sortOrder);
                 break;
             }
-            // content://com.outlook.notyetapp.app/activities/#/habitdata
+            // content://com.outlook.notyetapp/activities/#/habitdata
             case HabitContract.ACTIVITY_HABITDATA_ENTRIES: {
                 retCursor = getHabitData(uri, projection, selection, selectionArgs, sortOrder);
                 break;
@@ -217,7 +216,7 @@ public class HabitProvider extends ContentProvider {
     public int delete(Uri uri, String whereClause, String[] whereClauseArgs) {
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
         switch (sUriMatcher.match(uri)) {
-            // content://com.outlook.notyetapp.app/activities/#
+            // content://com.outlook.notyetapp/activities/#
             case HabitContract.ACTIVITY: {
                 //Note, here we ignore the user's selection and selection args in favor of our own which is what this Uri is intended for.
                 long activityId = HabitContract.ActivitiesEntry.getActivityNumberFromUri(uri);
@@ -240,7 +239,7 @@ public class HabitProvider extends ContentProvider {
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
 
         switch (sUriMatcher.match(uri)) {
-            // content://com.outlook.notyetapp.app/activities/#
+            // content://com.outlook.notyetapp/activities/#
             case HabitContract.ACTIVITY:
             {
                 //Note, here we ignore the user's selection and selection args in favor of our own which is what this Uri is intended for.
@@ -250,7 +249,7 @@ public class HabitProvider extends ContentProvider {
                 rowsUpdated = db.update(HabitContract.ActivitiesEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             }
-            // content://com.outlook.notyetapp.app/habitdata/#
+            // content://com.outlook.notyetapp/habitdata/#
             case HabitContract.HABITDATA_ENTRY:
             {
                 long habitDataId = HabitContract.HabitDataEntry.getHabitNumberFromUri(uri);

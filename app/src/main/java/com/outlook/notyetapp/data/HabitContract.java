@@ -30,8 +30,8 @@ public class HabitContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // Possible paths (appended to base content URI for possible URI's)
-    // For instance, content://com.outlook.notyetapp.app/activities/ is a valid path for
-    // looking at activity settings. content://com.outlook.notyetapp.app/givemeroot/ will fail,
+    // For instance, content://com.outlook.notyetapp/activities/ is a valid path for
+    // looking at activity settings. content://com.outlook.notyetapp/givemeroot/ will fail,
     // as the ContentProvider hasn't been given any information on what to do with "givemeroot".
     public static final String PATH_ACTIVITIES = "activities";
     public static final String PATH_HABIT_DATA = "habitdata";
@@ -189,12 +189,12 @@ public class HabitContract {
         // float/real
         public static final String COLUMN_TYPE = "type";
 
-        // URI content://com.outlook.notyetapp.app/habitdata/#
+        // URI content://com.outlook.notyetapp/habitdata/#
         public static Uri buildHabitDataUriForHabitDataEntryId(long habitDataId) {
             return ContentUris.withAppendedId(CONTENT_URI, habitDataId);
         }
 
-        // URI content://com.outlook.notyetapp.app/activities/#/habitdata
+        // URI content://com.outlook.notyetapp/activities/#/habitdata
         public static Uri buildUriForAllHabitDataForActivityId(long activityId) {
             return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_HABIT_DATA).build();
         }
@@ -403,7 +403,7 @@ public class HabitContract {
         public static final int COLUMN_ROLLING_AVG_90 = 5;
         public static final int COLUMN_TYPE = 6;
 
-        //EX. URI content://com.outlook.notyetapp.app/activities/#/habitdata
+        //EX. URI content://com.outlook.notyetapp/activities/#/habitdata
         public static Uri buildHabitDataUriForActivity(long activityId){
             return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_HABIT_DATA).build();
         }
@@ -418,7 +418,7 @@ public class HabitContract {
 
         public static final int COLUMN_DATE = 0;
 
-        //EX. URI content://com.outlook.notyetapp.app/activities/#/habitdata
+        //EX. URI content://com.outlook.notyetapp/activities/#/habitdata
         public static Uri buildHabitDataUriForActivity(long activityId){
             return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_HABIT_DATA).build();
         }
@@ -445,7 +445,7 @@ public class HabitContract {
 
         public static final String GROUP_BY_ACTIVITY_ID = HabitDataEntry.COLUMN_ACTIVITY_ID;
 
-        // URI content://com.outlook.notyetapp.app/activities/#/stats
+        // URI content://com.outlook.notyetapp/activities/#/stats
         public static Uri buildUriForHabitDataStatsForActivityId(long activityId) {
             return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_STATS).build();
         }
