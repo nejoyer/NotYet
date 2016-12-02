@@ -21,11 +21,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "notyet.db";
 
+    public static final String DOWNGRADE_NOT_SUPPORTED = "Downgrade Not Allowed";
+
     private Context mContext = null;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        throw new UnsupportedOperationException(DOWNGRADE_NOT_SUPPORTED);
     }
 
     @Override
