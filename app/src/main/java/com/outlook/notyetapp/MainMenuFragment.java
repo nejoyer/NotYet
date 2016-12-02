@@ -18,6 +18,11 @@ public class MainMenuFragment extends Fragment {
 
     public boolean mShowAll = false;
 
+    private int mVisibilityChangedCount = 0;
+
+    private Menu mMenu = null;
+    private MenuInflater mMenuInflater = null;
+
     private MenuItem mVisibilityChangedMenuItem;
 
 
@@ -53,6 +58,12 @@ public class MainMenuFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    public void inflateDemoMenu(){
+        if(BuildConfig.FLAVOR.equals("demo")){
+            mMenuInflater.inflate(R.menu.main_menu_demo_fragment, mMenu);
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(MainActivity.SHOW_ALL_KEY, mShowAll);
@@ -68,6 +79,7 @@ public class MainMenuFragment extends Fragment {
 
     public void setVisiblityIcon()
     {
+
         mVisibilityChangedMenuItem.setChecked(mShowAll);
         if(mShowAll)
         {
@@ -82,7 +94,8 @@ public class MainMenuFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu_fragment, menu);
         if(BuildConfig.FLAVOR.equals("demo")){
-            inflater.inflate(R.menu.main_menu_demo_fragment, menu);
+            mMenu = menu;
+            mMenuInflater = inflater;
         }
     }
 
@@ -96,6 +109,13 @@ public class MainMenuFragment extends Fragment {
                 return true;
             case R.id.action_visibility_changed:
                 mShowAll = !mShowAll;
+                if(BuildConfig.FLAVOR.equals("demo")){
+                    mVisibilityChangedCount++;
+                    if(mVisibilityChangedCount == 5)
+                    {
+                        inflateDemoMenu();
+                    }
+                }
                 setVisiblityIcon();
                 mListener.visibilityChanged(mShowAll);
                 return true;
