@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:orderInCategory="3"
+        android:id="@+id/action_demo_copy_db"
+        android:title="Reset Demo"
+        app:showAsAction="never"/>
+</menu>

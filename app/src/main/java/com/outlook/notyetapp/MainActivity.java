@@ -259,6 +259,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         updateActivitiesIfNecessary();
     }
 
+    public void forceUpdateActivities()
+    {
+        mDBDateLastUpdatedTo = 0;
+        updateActivitiesIfNecessary();
+    }
+
     // If the user hasn't used the app today, we need to populate the DB with default data for today (or more days if necessary).
     // TODO: allow a way to force this to happen?
     public void updateActivitiesIfNecessary()

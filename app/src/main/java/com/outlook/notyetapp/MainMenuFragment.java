@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.outlook.notyetapp.utilities.DemoUtils;
+
 // Pull all the menu handling code for the Main Activity into a fragment to avoid making that file too long.
 public class MainMenuFragment extends Fragment {
 
@@ -79,6 +81,9 @@ public class MainMenuFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu_fragment, menu);
+        if(BuildConfig.FLAVOR.equals("demo")){
+            inflater.inflate(R.menu.main_menu_demo_fragment, menu);
+        }
     }
 
     @Override
@@ -106,6 +111,10 @@ public class MainMenuFragment extends Fragment {
                 return true;
             case R.id.action_about:
                 startActivity(new Intent(getActivity(), AboutActivity.class));
+                return true;
+            case R.id.action_demo_copy_db:
+                DemoUtils.CopyDemoDBAndUpdate(getActivity());
+                ((MainActivity)getActivity()).forceUpdateActivities();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

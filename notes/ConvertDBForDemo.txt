@@ -1,0 +1,13 @@
+Update Activities SET activity_title = 'Snooze', sort_priority = 1 WHERE _id = 18;
+Update Activities SET activity_title = 'Vitamin', sort_priority = 2 WHERE _id = 1;
+Update Activities SET sort_priority = 3 WHERE _id = 15;
+Update Activities SET activity_title = 'Eat Breakfast', sort_priority = 4 WHERE _id = 14;
+Update Activities SET sort_priority = 5 WHERE _id = 4;
+Update Activities SET activity_title = 'Read Textbook', sort_priority = 6 WHERE _id = 6;
+Update Activities SET activity_title = 'Cigarettes', sort_priority = 7 WHERE _id = 17;
+Update Activities SET activity_title = 'Reddit', sort_priority = 8 WHERE _id = 12;
+Update Activities SET activity_title = 'Snacks', sort_priority = 9 WHERE _id = 23;
+Update Activities SET activity_title = 'Video Games', sort_priority = 10 WHERE _id = 19;
+Update Activities SET sort_priority = 11 WHERE _id = 10;
+Delete From HabitData where activity_id NOT IN (1, 4, 6, 10, 12, 14, 15, 17, 18, 19, 23);
+Delete From Activities where _id NOT IN (1, 4, 6, 10, 12, 14, 15, 17, 18, 19, 23);
