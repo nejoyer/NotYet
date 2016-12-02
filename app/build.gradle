@@ -4,7 +4,6 @@ android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
     defaultConfig {
-        applicationId 'com.outlook.notyetapp'
         minSdkVersion 16
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
@@ -15,9 +14,23 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            pseudoLocalesEnabled false
+        }
+        debug {
+            pseudoLocalesEnabled true
         }
     }
     productFlavors {
+        demo {
+            applicationId "com.outlook.notyetapp.demo"
+            versionCode 1
+            versionName 'Demo 0.1.0'
+        }
+        production {
+            applicationId "com.outlook.notyetapp"
+            versionCode 1
+            versionName 'Beta 0.1.0'
+        }
     }
 }
 

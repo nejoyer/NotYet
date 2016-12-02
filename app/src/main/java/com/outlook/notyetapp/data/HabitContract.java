@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 import android.support.v4.content.ContextCompat;
 import android.text.format.Time;
 
+import com.outlook.notyetapp.BuildConfig;
 import com.outlook.notyetapp.R;
 
 import java.text.SimpleDateFormat;
@@ -23,7 +24,7 @@ public class HabitContract {
     // relationship between a domain name and its website.  A convenient string to use for the
     // content authority is the package name for the app, which is guaranteed to be unique on the
     // device.
-    public static final String CONTENT_AUTHORITY = "com.outlook.notyetapp";
+    public static final String CONTENT_AUTHORITY = BuildConfig.APPLICATION_ID;
 
     // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
     // the content provider.
