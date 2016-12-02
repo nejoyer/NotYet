@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="eula_title">End­User License Agreement ("Agreement")</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
+    <string name="eula_title">End–User License Agreement (\"Agreement\")</string>
     <string name="eula_date_updated_label">Last updated: </string>
     <string name="eula_date_updated">November 29, 2016</string>
     <string name="date_last_agreed">January 1, 2000</string>
     <string name="eula_agree">I Agree</string>
     <string name="eula_cancel">I Disagree</string>
     <string name="eula_content">
-Please read this End­User License Agreement ("Agreement") carefully before clicking the "I Agree" button, downloading or using NotYet ("Application").
-\nBy clicking the "I Agree" button, downloading or using the Application, you are agreeing to be bound by the terms and conditions of this Agreement.
-\nIf you do not agree to the terms of this Agreement, do not click on the "I Agree" button and do not download or use the Application.
+Please read this End–User License Agreement (\"Agreement\") carefully before clicking the \"I Agree\" button, downloading or using NotYet (\"Application\").
+\nBy clicking the \"I Agree\" button, downloading or using the Application, you are agreeing to be bound by the terms and conditions of this Agreement.
+\nIf you do not agree to the terms of this Agreement, do not click on the \"I Agree\" button and do not download or use the Application.
 \n
 \nLicense
-\nThe creator of the Application grants you a revocable, non­exclusive, non­transferable, limited license to download, install and use the Application solely for your personal, non­commercial purposes strictly in accordance with the terms of this Agreement.
+\nThe creator of the Application grants you a revocable, non–exclusive, non–transferable, limited license to download, install and use the Application solely for your personal, non–commercial purposes strictly in accordance with the terms of this Agreement.
 \n
 \nRestrictions
 \nYou agree not to, and you will not permit others to:
