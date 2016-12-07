@@ -1,0 +1,38 @@
+Welcome to a quick demo of NotYet. You're not a perfect person, at least not yet.
+The first thing we see is a list of the habits that I am trying to build.
+This is of course a demo list, you'll have your own list that you've configured.
+The first thing on my list is Snooze. I put this in there becasuse I used to hit the snooze button *a lot*, and I'm trying to get better at not doing that... and I have been. So if I tap on Snooze, I can see a history of the data that I entered. The red here just means that I haven't entered any data today. Good news, I didn't hit the snooze button a single time today, so I'll just add that now. Simple.
+
+Lets go back to our main list. We can see that the colors associated with the snooze button have changed. This indicates that with the updated data, I'm doing good on building that habit.
+
+Lets check out another habit. Pushups.
+I've been trying to do 50 pushups every day. I'm not quite there yet, but tracking my progress has helped me improve. Let me take this chance to explain some of the numbers you see on the screen and why NotYet works well for me. 
+
+The first column is the value that I've entered. So in this case, I skipped pushups for today, so I'll enter 0.
+The second column is the average over the last 7 days. A30 is the average over the last 30 days. A90 doesn't really need explaination.
+
+So as we look at my data, we can see that I have been improving. If we look back at the oldest data, all my averages are low... because I'm averaging with lots of zeros. But then as time goes on and I've entered more data, the averages start going up. My goal is to get all the averages to 50. I'm not quite there yet, but I'm working on it.
+
+At the bottom it tells me what my best averages ever were. I want to keep that number going up. Looking at numbers is okay, but usually, I just want to look at the graph. Here we can visually see my progress. Theres a lot going on here, so let me hide some of the data. I'm not there yet, but I'm working on it and that's what counts.
+
+So back to the main list.
+I've got a lot of goals... and I'm getting pretty good at most of them. I don't want to have to take too long entering data every day. So let me show you the fast way that I can enter data.
+
+I took my vitamin today... not that hard. I can just swipe this task to the left and it will get updated to show that I took my vitamin today. It will also hide it from the list so I don't have to think about it and can focus on other goals.
+
+I made my bed.
+I ate breakfast.
+
+I decided to skip pushups for today and since it is getting late, I know I'm not going to do them. I can swipe to the right to just hide it without entering a value. Also since I already entered a value for snooze, I can swipe that one too.
+
+I didn't read my textbook today.
+
+You can also work on things that you are trying not to do. So if we look at Cigarettes, this is a goal I've been working on for a long time. And the Best values at the bottom are the lowest values, rather than the highest like for pushups. The graph just shows 90 days worth of data, but you can scroll and zoom if you want to. Wow, I used to smoke a lot. But I'm getting much better! Hooray, today is 90 days without a cigarette.
+
+So as you progress through your day, you can see your list get shorter. Let me quickly enter the values from the rest of my day. Tada, at the end of the day, the list is clear. Tomorrow it will be back. But wait, I decided to do some pushups at the last minute... I can just click the eye at the top and I can see all the items in my list. Quickly make that update.
+
+Now we can see that my list is mostly green. I like to look at the full list at the end of the day to see how much progress I've been making.
+
+There's so much more to show, but I don't want to make this video too long. You can always post comments here, email me, or check out the help section in the app.
+
+I hope you find this app useful and find yourself moving inevitably towards becoming the person you want to be.
