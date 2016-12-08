@@ -21,6 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.outlook.notyetapp.data.DBHelper;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.utilities.EULAUtils;
@@ -95,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         else {
             loadMemberVariablesFromBundle(savedInstanceState);
         }
+
+        MobileAds.initialize(this, getString(R.string.admob_appid));
+
         EULAUtils.ShowEULAIfNecessary(this, mEulaAgreedDate);
 
         setContentView(R.layout.activity_main);
@@ -102,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(findViewById(R.id.right_pane_frame) != null){
             mIsTwoPane = true;
         }
-
 
         mActivityAdapter = new ActivityAdapter(this, null, 0);
         mMainListView = (ListView) findViewById(R.id.main_listview);
@@ -133,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         getSupportLoaderManager().initLoader(HabitContract.ActivitiesTodaysStatsQueryHelper.ACTIVITES_TODAYS_STATS_LOADER, null, this);
+
+        AdView adView = (AdView) findViewById(R.id.main_banner_ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("***REMOVED***")
+                .build();
+        adView.loadAd(adRequest);
     }
 
     private View GenerateHelpHeader(){

@@ -78,6 +78,13 @@
     <string name="error_creating_activity_title">Error Creating Activity</string>
     <string name="error_creating_activity_message">Make sure you have a unique title for your activity and all fields are completed.</string>
 
+    <!--AdMob-->
+    <string name="admob_appid">***REMOVED***</string>
+    <string name="admob_main_activity_banner_unit_id">***REMOVED***</string>
+    <string name="admob_habit_activity_banner_unit_id">***REMOVED***</string>
+    <string name="admob_graph_activity_banner_unit_id">***REMOVED***</string>
+    <string name="admob_test_banner_unit_id">***REMOVED***</string>
+    
     <!--AboutActivity-->
     <string name="about_activity_title">About</string>
     <string name="about_about_header">@string/about_activity_title</string>
@@ -93,7 +100,7 @@
         &#8226;<a href="https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html">Android Asset Studio</a> was used to generate the icon. Licensed under the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.\n
         &#8226;EULA based on a template provided by <a href="https://media.termsfeed.com/pdf/eula-template.pdf">termsfeed.com</a>.\n
     </string>
-
+    
     <!--HelpActivity-->
     <string name="help_activity_html">
         <![CDATA[

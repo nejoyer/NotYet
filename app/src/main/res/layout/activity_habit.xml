@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/habit_activity_frame"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/habit_banner_ad"
+        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/admob_habit_activity_banner_unit_id">
+    </com.google.android.gms.ads.AdView>
+    <FrameLayout
+        android:id="@+id/habit_activity_frame"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/habit_banner_ad">
+        <!--Fragment loaded programmatically allowing us to pass args-->
+    </FrameLayout>
+
     <!--<fragment-->
         <!--android:id="@+id/habit_activity_fragment"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent">-->
     <!--</fragment>-->
-</FrameLayout>
+</RelativeLayout>

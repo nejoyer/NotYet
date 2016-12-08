@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.jjoe64.graphview.GraphView;
@@ -57,6 +60,8 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MobileAds.initialize(this, getString(R.string.admob_appid));
 
         if(savedInstanceState != null){
             mMinX = savedInstanceState.getDouble(BUNDLE_MIN_X_KEY);
@@ -108,6 +113,13 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
         });
 
         getSupportLoaderManager().initLoader(HabitContract.HabitDataQueryHelper.GRAPHDATA_LOADER, null, this);
+
+        AdView adView = (AdView) findViewById(R.id.graph_banner_ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("***REMOVED***")
+                .build();
+        adView.loadAd(adRequest);
     }
 
     private void toggleSeries(CustomLegendRenderer.LegendMapping map)
