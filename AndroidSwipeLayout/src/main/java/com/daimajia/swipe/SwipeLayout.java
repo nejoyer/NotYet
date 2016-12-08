@@ -972,8 +972,10 @@ public class SwipeLayout extends FrameLayout {
                 //the drag state and the direction are already judged at onInterceptTouchEvent
                 checkCanDrag(event);
                 if (mIsBeingDragged) {
-                    getParent().requestDisallowInterceptTouchEvent(true);
-                    mDragHelper.processTouchEvent(event);
+                    if(getParent() != null) {
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                        mDragHelper.processTouchEvent(event);
+                    }
                 }
                 break;
             }
