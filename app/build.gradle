@@ -29,7 +29,7 @@ android {
         production {
             applicationId "com.outlook.notyetapp"
             versionCode 1
-            versionName 'Beta 0.1.0'
+            versionName '0.1.1'
         }
     }
 }
