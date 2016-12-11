@@ -8,7 +8,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.HabitContract.ActivitiesEntry;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 
 public class CreateActivity extends AppCompatActivity implements DoneCancelFragment.OnFragmentInteractionListener {
 
@@ -57,6 +59,9 @@ public class CreateActivity extends AppCompatActivity implements DoneCancelFragm
                                 values.getAsFloat(ActivitiesEntry.COLUMN_HISTORICAL),
                                 values.getAsInteger(ActivitiesEntry.COLUMN_HIGHER_IS_BETTER) == 1)
                 });
+
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+                mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.HABIT_CREATED, new Bundle());
                 finish();
             }
         }

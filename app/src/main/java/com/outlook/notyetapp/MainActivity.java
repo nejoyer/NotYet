@@ -24,8 +24,10 @@ import com.daimajia.swipe.SwipeLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.DBHelper;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.EULAUtils;
 import com.outlook.notyetapp.utilities.SwipeOpenListener;
 
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private boolean mIsTwoPane = false;
     private static final String HABIT_ACTIVITY_FRAGMENT_TAG = "habit_activity_fragment_tag";
+
+    FirebaseAnalytics mFirebaseAnalytics = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         else {
             loadMemberVariablesFromBundle(savedInstanceState);
         }
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setMinimumSessionDuration(5000);
+        mFirebaseAnalytics.setSessionTimeoutDuration(300000);
 
         MobileAds.initialize(this, getString(R.string.admob_appid));
 
@@ -315,12 +323,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         {
             CreateRecentDataTask task = new CreateRecentDataTask();
             task.execute(this);
+            long daysUpdated = todaysDBDate - mDBDateLastUpdatedTo;
             mDBDateLastUpdatedTo = todaysDBDate;
 
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putLong(DBDATE_LAST_UPDATED_TO_KEY, mDBDateLastUpdatedTo);
             editor.commit();
+
+            Bundle bundle = new Bundle();
+            bundle.putLong(AnalyticsConstants.ParamNames.NUMBER_OF_HABITS, mActivityAdapter.getCount());
+            bundle.putLong(AnalyticsConstants.ParamNames.DAYS_UPDATED, daysUpdated);
+            bundle.putLong(AnalyticsConstants.ParamNames.BETA_USER, 1);
+            bundle.putLong(FirebaseAnalytics.Param.VALUE, daysUpdated);
+            mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.UPDATE_HABITS_IF_NECESSARY, bundle);
         }
     }
 
@@ -442,6 +458,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void visibilityChanged(boolean showAll) {
         mShowAll = showAll;
+        mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.SHOW_ALL, new Bundle());
         getSupportLoaderManager().restartLoader(HabitContract.ActivitiesTodaysStatsQueryHelper.ACTIVITES_TODAYS_STATS_LOADER, null, this);
     }
 }

@@ -3,6 +3,8 @@
     package="com.outlook.notyetapp"
     android:installLocation="auto">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <!-- TODO... runtime permissions for 23+ https://blog.xamarin.com/requesting-runtime-permissions-in-android-marshmallow/ -->
     <!-- Actually, now I don't think i need permissions... I'm using the default DB location, but allow the system to move the whole app to card. -->

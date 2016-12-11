@@ -6,6 +6,8 @@ import android.os.Bundle;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 
 // When you tap on an activity in the Main ListView, you see this activity which includes a graph and list of data points.
 // You can click any of the data points to update it, or swipe right on multiple data points to bulk update.
@@ -19,6 +21,9 @@ public class HabitActivity extends AppCompatActivity {
         MobileAds.initialize(this, getString(R.string.admob_appid));
 
         setContentView(R.layout.activity_habit);
+
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.logEvent(AnalyticsConstants.EventNames.HABIT_ACTIVITY, new Bundle());
 
         if(savedInstanceState == null)
         {

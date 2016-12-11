@@ -15,7 +15,9 @@ import android.view.View;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
@@ -73,6 +75,9 @@ public class GraphActivity extends AppCompatActivity implements LoaderManager.Lo
         mActivityTitle = getIntent().getStringExtra(GraphActivity.ACTIVITY_TITLE_KEY);
 
         setContentView(R.layout.activity_graph);
+
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.logEvent(AnalyticsConstants.EventNames.GRAPH_ACTIVITY, new Bundle());
 
         setTitle(mActivityTitle);
 

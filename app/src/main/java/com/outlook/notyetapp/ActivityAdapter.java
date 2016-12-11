@@ -3,6 +3,7 @@ package com.outlook.notyetapp;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.CursorAdapter;
@@ -13,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
 import com.outlook.notyetapp.utilities.SwipeOpenListener;
 
@@ -37,6 +40,8 @@ public class ActivityAdapter extends CursorAdapter {
                 long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_day_change_key), "0"));
                 long todaysDBDate = HabitContract.HabitDataEntry.getTodaysDBDate(offset);
 
+                FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+
                 //Swiped to the left, so update the value for that activity for today.
                 if(layout.getDragEdge() == SwipeLayout.DragEdge.Right) {
                     ArrayList<Long> arrayList = new ArrayList<Long>(1);
@@ -51,8 +56,13 @@ public class ActivityAdapter extends CursorAdapter {
                                     HabitContract.HabitDataEntry.HabitValueType.USER
                             )
                     );
+
+                    firebaseAnalytics.logEvent(AnalyticsConstants.EventNames.SWIPE_HIDE_AND_UPDATE, new Bundle());
                 }
-                //Whether they swiped right or left, now we want to hid it for the rest of the day.
+                else {
+                    firebaseAnalytics.logEvent(AnalyticsConstants.EventNames.SWIPE_HIDE, new Bundle());
+                }
+                //Whether they swiped right or left, now we want to hide it for the rest of the day.
                 ContentValues contentValues = new ContentValues(1);
                 contentValues.put(HabitContract.ActivitiesEntry.COLUMN_HIDE_DATE, todaysDBDate);
                 layout.getContext().getContentResolver().update(

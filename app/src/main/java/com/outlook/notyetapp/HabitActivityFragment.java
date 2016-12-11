@@ -29,7 +29,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
 import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.outlook.notyetapp.utilities.TextValidator;
@@ -192,8 +194,13 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
                                         Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 getActivity().getContentResolver().delete(
                                         HabitContract.ActivitiesEntry.buildActivityUri(mActivityId), null, null);
+
+                                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+                                mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.HABIT_DELETED, new Bundle());
+
                                 startActivity(mainActivityIntent);
                                 Toast.makeText(getActivity(), "Activity deleted", Toast.LENGTH_LONG).show();
+
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
             default:
