@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private static final String DBDATE_LAST_UPDATED_TO_KEY = "dbdatelastupdatedto";
     private long mDBDateLastUpdatedTo = 0;
+    private static final String QUERY_DATE_KEY = "querydate";
+    private long mQueryDate = 0;
     public static final String SHOW_ALL_KEY = "showall";
     private boolean mShowAll = false;
     private final static String POSITION_KEY = "position";
@@ -267,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onSaveInstanceState(Bundle saveInstanceState) {
         saveInstanceState.putLong(DBDATE_LAST_UPDATED_TO_KEY, mDBDateLastUpdatedTo);
+        saveInstanceState.putLong(QUERY_DATE_KEY, mQueryDate);
         saveInstanceState.putBoolean(SHOW_ALL_KEY, mShowAll);
         saveInstanceState.putInt(POSITION_KEY, mPosition);
         saveInstanceState.putBoolean(NEW_USER_KEY, mNewUser);
@@ -284,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadMemberVariablesFromBundle(Bundle savedInstanceState)
     {
         mDBDateLastUpdatedTo = savedInstanceState.getLong(DBDATE_LAST_UPDATED_TO_KEY);
+        mQueryDate = savedInstanceState.getLong(QUERY_DATE_KEY);
         mShowAll = savedInstanceState.getBoolean(SHOW_ALL_KEY);
         mPosition = savedInstanceState.getInt(POSITION_KEY);
         mNewUser = savedInstanceState.getBoolean(NEW_USER_KEY);
@@ -294,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadMemberVariablesFromPreferences()
     {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        mQueryDate = sharedPref.getLong(QUERY_DATE_KEY, 0);
         mDBDateLastUpdatedTo = sharedPref.getLong(DBDATE_LAST_UPDATED_TO_KEY, 0);
         mShowAll = sharedPref.getBoolean(SHOW_ALL_KEY, false);
         mNewUser = sharedPref.getBoolean(NEW_USER_KEY, true);
@@ -323,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         {
             CreateRecentDataTask task = new CreateRecentDataTask();
             task.execute(this);
+
             long daysUpdated = todaysDBDate - mDBDateLastUpdatedTo;
             mDBDateLastUpdatedTo = todaysDBDate;
 
@@ -345,7 +351,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         String selection = null;
         String[] selectionArgs = null;
         long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_day_change_key), "0"));
-        String dbDateString = String.valueOf(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
+        mQueryDate = HabitContract.HabitDataEntry.getTodaysDBDate(offset);
+        String dbDateString = String.valueOf(mQueryDate);
+
         if(mShowAll) {
             selection = HabitContract.HabitDataEntry.COLUMN_DATE + " = ?";
             selectionArgs = new String[]{dbDateString};
@@ -433,6 +441,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_day_change_key), "0"));
+        if(mQueryDate != HabitContract.HabitDataEntry.getTodaysDBDate(offset)){
+            //We have a new date, so the query needs to change and we need a new loader, can't just re-query with the same loader.
+            getSupportLoaderManager().restartLoader(HabitContract.ActivitiesTodaysStatsQueryHelper.ACTIVITES_TODAYS_STATS_LOADER, null, this);
+            return;
+        }
+
         mActivityAdapter.swapCursor(data);
 
         if(mIsTwoPane && data.getCount() > 1 && mMainListView.getCheckedItemPosition() < 0) {
