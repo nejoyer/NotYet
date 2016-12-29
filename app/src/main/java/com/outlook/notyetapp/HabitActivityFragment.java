@@ -356,7 +356,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
 
         //only show the dialog if we are changing a date more than 30 days old. That is when the most work needs to be done.
         // otherwise, the process should be so quick that the progress dialog only has an instant to show and is more distracting.
-        boolean showDialog = HabitContract.HabitDataEntry.getTodaysDBDate(0 /*offset doesn't matter for this*/) -  datesToUpdate.get(datesToUpdate.size() - 1) > 30;
+        boolean showDialog = HabitContract.HabitDataEntry.getTodaysDBDate(0 /*offset doesn't matter for this*/) -  datesToUpdate.get(0) > 30;
 
         new UpdateHabitDataTask(getActivity(), showDialog).execute(
                 new UpdateHabitDataTask.Params(
