@@ -89,7 +89,7 @@
     <string name="about_activity_title">About</string>
     <string name="about_about_header">@string/about_activity_title</string>
     <string name="about_text">This application was made mostly for myself to improve my habits based on a strategy that I think works best.
-        Failing once does not send you back to the beginning... you must get back up and continue to strive to improve. I hope it is useful to you too.</string>
+        Failing once does not send you back to the beginning... you must get back up and continue to strive to improve. I hope it is useful for you too.</string>
     <string name="about_email"> - <a href="mailto:NotYetApp@outlook.com">NotYetApp@outlook.com</a></string>
     <string name="about_attribution_header">Attributions</string>
     <string name="about_attributions">This application uses:\n
