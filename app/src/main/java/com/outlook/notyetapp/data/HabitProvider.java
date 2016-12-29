@@ -188,7 +188,7 @@ public class HabitProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        //todo
+        
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
