@@ -156,9 +156,7 @@ public class UpdateHabitDataTask extends AsyncTask<UpdateHabitDataTask.Params, V
         task.execute(new UpdateStatsTask.Params(mParams.mActivityId, mParams.mContext, mParams.mHigherIsBetter));
 
         if(this.mProgressDialog != null){
-            if(this.mProgressDialog.getOwnerActivity() != null) {
-                this.mProgressDialog.dismiss();
-            }
+            this.mProgressDialog.dismiss();
         }
 
         super.onPostExecute(aVoid);
