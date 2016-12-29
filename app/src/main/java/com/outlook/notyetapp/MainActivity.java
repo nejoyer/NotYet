@@ -340,7 +340,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Bundle bundle = new Bundle();
             bundle.putLong(AnalyticsConstants.ParamNames.NUMBER_OF_HABITS, mActivityAdapter.getCount());
             bundle.putLong(AnalyticsConstants.ParamNames.DAYS_UPDATED, daysUpdated);
-            bundle.putLong(AnalyticsConstants.ParamNames.BETA_USER, 1);
             bundle.putLong(FirebaseAnalytics.Param.VALUE, daysUpdated);
             mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.UPDATE_HABITS_IF_NECESSARY, bundle);
         }
