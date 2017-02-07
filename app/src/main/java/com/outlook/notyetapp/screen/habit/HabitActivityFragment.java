@@ -1,4 +1,4 @@
-package com.outlook.notyetapp;
+package com.outlook.notyetapp.screen.habit;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,9 +8,6 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.KeyEvent;
@@ -30,22 +27,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.outlook.notyetapp.ActivitySettingsActivity;
+import com.outlook.notyetapp.MainActivity;
+import com.outlook.notyetapp.R;
+import com.outlook.notyetapp.UpdateHabitDataTask;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.screen.graph.GraphActivity;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
 import com.outlook.notyetapp.utilities.GraphUtilities;
-import com.outlook.notyetapp.utilities.TextValidator;
+import com.outlook.notyetapp.utilities.HabitValueValidator;
+import com.outlook.notyetapp.utilities.library.GroupValidator;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class HabitActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, HabitDataAdapter.ChecksChangedListener{
+public class HabitActivityFragment extends Fragment implements HabitActivityFragmentContract.View{
 
     public static final String ACTIVITY_ID_KEY = "activity_id";
     public static final String ACTIVITY_FORECAST_KEY = "activity_forecast";
@@ -68,8 +72,9 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
 
     private LinearLayout mMultiselectDialog = null;
     private EditText mMultiSelectDialogValueField = null;
-    private TextValidator mMultiSelectFieldValidator;
-    private boolean mMultiSelectFieldHasError = true;
+
+    private GroupValidator groupValidator;
+
     private GraphView mGraph = null;
 
     private LineGraphSeries<DataPoint> mValuesDataSeries = new LineGraphSeries<DataPoint>();
@@ -77,6 +82,8 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
     private LineGraphSeries<DataPoint> mAvg30DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
+
+    HabitActivityFragmentContract.ActionListener mPresenter;
 
 
     // Use newInstance instead of this if possible to avoid missing a param
@@ -133,22 +140,14 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
         footer.setOnClickListener(mFooterClickListener);
         mHabitDataListView.addFooterView(footer);
 
+        groupValidator = new GroupValidator(getContext());
+
         mMultiselectDialog = (LinearLayout) fragmentView.findViewById(R.id.multiselect_value_dialog);
         mMultiSelectDialogValueField = (EditText) mMultiselectDialog.findViewById(R.id.multiselect_value_edittext);
+
         mMultiSelectDialogValueField.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        mMultiSelectFieldValidator = new TextValidator(mMultiSelectDialogValueField) {
-            @Override
-            public void validate(TextView textView, String text) {
-                if(text.length() < 1) {
-                    textView.setError("Cannot be empty");
-                    mMultiSelectFieldHasError = true;
-                }
-                else {
-                    mMultiSelectFieldHasError = false;
-                }
-            }
-        };
-        mMultiSelectDialogValueField.addTextChangedListener(mMultiSelectFieldValidator);
+        groupValidator.AddFieldToValidate(mMultiSelectDialogValueField, HabitValueValidator.class);
+
         mMultiselectDialog.findViewById(R.id.multiselect_cancel_button).setOnClickListener(mMultiSelectClickListener);
         mMultiselectDialog.findViewById(R.id.multiselect_ok_button).setOnClickListener(mMultiSelectClickListener);
 
@@ -156,11 +155,21 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
 
         mHabitDataListView.setOnItemClickListener(mItemClickListener);
 
-        mHabitDataAdapter.setChecksChangedListener(this);
+        GraphUtilities graphUtilities = new GraphUtilities();
+        //todo DI
+        mPresenter = new HabitActivityFragmentPresenter(this,
+                DefaultStorIOContentResolver.builder().contentResolver(getContext().getContentResolver()).build(),
+                graphUtilities
+        );
+        mPresenter.loadHabitData(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), mForecast);
+        mPresenter.loadBestData(HabitContract.ActivitiesEntry.buildActivityUri(mActivityId));
+
+        mHabitDataAdapter.setChecksChangedListener(mPresenter);
         mHabitDataListView.setAdapter(mHabitDataAdapter);
 
-        getActivity().getSupportLoaderManager().restartLoader(HabitContract.HabitDataQueryHelper.HABITDATA_LOADER, null, this);
-        getActivity().getSupportLoaderManager().restartLoader(HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER, null, this);
+
+//        getActivity().getSupportLoaderManager().restartLoader(HabitContract.HabitDataQueryHelper.HABITDATA_LOADER, null, this);
+//        getActivity().getSupportLoaderManager().restartLoader(HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER, null, this);
 
         return fragmentView;
     }
@@ -182,8 +191,8 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
                 return true;
             case R.id.action_habit_delete:
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Delete Activity?")
-                        .setMessage("Do you really want to delete this activity and all associated data?")
+                        .setTitle(getString(R.string.delete_habit_dialog_title))
+                        .setMessage(getString(R.string.delete_habit_dialog_message))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -199,7 +208,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
                                 mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.HABIT_DELETED, new Bundle());
 
                                 startActivity(mainActivityIntent);
-                                Toast.makeText(getActivity(), "Activity deleted", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), getString(R.string.delete_habit_completed_toast), Toast.LENGTH_LONG).show();
 
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
@@ -213,7 +222,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
         @Override
         public void onClick(View view) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("How many days to add?");
+            alertDialogBuilder.setTitle(getString(R.string.add_more_history_dialog_question));
             final EditText input = new EditText(getActivity());
             input.setInputType(InputType.TYPE_CLASS_NUMBER);
             alertDialogBuilder.setView(input);
@@ -370,114 +379,178 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
         );
     }
 
+//    @Override
+//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+//        if(mActivityId != -99) {
+//            switch (id) {
+//                case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
+//                    return new CursorLoader(getActivity(),//context
+//                            HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId),//Uri
+//                            HabitContract.HabitDataQueryHelper.HABITDATA_PROJECTION,//Projection
+//                            null,//Selection
+//                            null,//SelectionArgs
+//                            HabitContract.HabitDataQueryHelper.SORT_BY_DATE_DESC);//sortOrder
+//                case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
+//                    return new CursorLoader(getActivity(),
+//                            HabitContract.ActivitiesEntry.buildActivityUri(mActivityId),
+//                            HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_PROJECTION,
+//                            null,
+//                            null,
+//                            null);
+//                default:
+//                    throw new IllegalArgumentException("Invalid id");
+//            }
+//        }
+//        return null;
+//    }
+
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(mActivityId != -99) {
-            switch (id) {
-                case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
-                    return new CursorLoader(getActivity(),//context
-                            HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId),//Uri
-                            HabitContract.HabitDataQueryHelper.HABITDATA_PROJECTION,//Projection
-                            null,//Selection
-                            null,//SelectionArgs
-                            HabitContract.HabitDataQueryHelper.SORT_BY_DATE_DESC);//sortOrder
-                case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
-                    return new CursorLoader(getActivity(),
-                            HabitContract.ActivitiesEntry.buildActivityUri(mActivityId),
-                            HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_PROJECTION,
-                            null,
-                            null,
-                            null);
-                default:
-                    throw new IllegalArgumentException("Invalid id");
-            }
-        }
-        return null;
+    public void renderHabitDataToList(Cursor data) {
+        mHabitDataAdapter.swapCursor(data);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        switch (loader.getId())
-        {
-            case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
-                updateBestData(data);
-                break;
-            case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
-                mHabitDataAdapter.swapCursor(data);
-                if(data.getCount() > 0) {
-                    List<DataPoint[]> dataPoints = GraphUtilities.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
-                    DataPoint[] valDataPoints = dataPoints.get(0);
-                    GraphUtilities.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
-                            valDataPoints[valDataPoints.length - 90].getX(),
-                            mGraph,
-                            mValuesDataSeries,
-                            mAvg7DataSeries,
-                            mAvg30DataSeries,
-                            mAvg90DataSeries,
-                            mTodaySeries);
-                    mGraph.getViewport().setScrollable(false);
-                    mGraph.getViewport().setScalable(false);
-                    mGraph.getViewport().setXAxisBoundsManual(true);
-                    mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
-                    mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
-                    mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
-                    mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
-                    mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-                    GraphUtilities.AddTodayLine(mGraph, mTodaySeries);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid id");
+    public void renderHabitDataToGraph(List<DataPoint[]> data) {
+        if(data.size() > 0) {
+            GraphUtilities gu = new GraphUtilities();
+            gu.AddSeriesFromData(mGraph, data);
+
+            DataPoint[] valDataPoints = data.get(0);
+            double minX = valDataPoints[valDataPoints.length - 180].getX();
+            double maxX = valDataPoints[valDataPoints.length - 90].getX();
+
+            mGraph.getViewport().setMinX(minX);
+            mGraph.getViewport().setMaxX(maxX);
+            mGraph.getViewport().setScrollable(false);
+            mGraph.getViewport().setScalable(false);
+            mGraph.getViewport().setXAxisBoundsManual(true);
+            mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
+            mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
+            mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
+            mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+            mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
+            gu.ShowTodayLine(mGraph);
+//            gu.AddTodayLine(mGraph, mTodaySeries);
         }
     }
 
-    private void updateBestData(Cursor data){
-        if(data.moveToFirst()) {
-            mActivityTitle = data.getString(HabitContract.ActivityBestQueryHelper.COLUMN_ACTIVITY_TITLE);
-            if(!mIsTwoPane) {
-                getActivity().setTitle(mActivityTitle);
-            }
-            mHigherIsBetter = data.getInt(HabitContract.ActivityBestQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1;
-            mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST7)));
-            mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)));
-            mFooterBest90.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST90)));
-        }
-    }
-
-
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mHabitDataAdapter.swapCursor(null);
+    public void renderBestData(String activityTitle, Boolean higherIsBetter, float best7, float best30, float best90) {
+        mActivityTitle = activityTitle;
+        if(!mIsTwoPane) {
+            getActivity().setTitle(activityTitle);
+        }
+        mHigherIsBetter = higherIsBetter;
+        mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(best7));
+        mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(best30));
+        mFooterBest90.setText(CustomNumberFormatter.formatToThreeCharacters(best90));
     }
+
+//    @Override
+//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+//        switch (loader.getId())
+//        {
+//            case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
+////                updateBestData(data);
+//                break;
+//            case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
+////                mHabitDataAdapter.swapCursor(data);
+////                if(data.getCount() > 0) {
+////                    GraphUtilities gu = new GraphUtilities();
+////                    List<DataPoint[]> dataPoints = gu.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
+////                    DataPoint[] valDataPoints = dataPoints.get(0);
+////                    gu.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
+////                            valDataPoints[valDataPoints.length - 90].getX(),
+////                            mGraph,
+////                            mValuesDataSeries,
+////                            mAvg7DataSeries,
+////                            mAvg30DataSeries,
+////                            mAvg90DataSeries,
+////                            mTodaySeries);
+////                    mGraph.getViewport().setScrollable(false);
+////                    mGraph.getViewport().setScalable(false);
+////                    mGraph.getViewport().setXAxisBoundsManual(true);
+////                    mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
+////                    mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
+////                    mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
+////                    mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
+////                    mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
+////                    gu.AddTodayLine(mGraph, mTodaySeries);
+////                }
+//                break;
+//            default:
+//                throw new IllegalArgumentException("Invalid id");
+//        }
+//    }
+
+//    private void updateBestData(Cursor data){
+//        if(data.moveToFirst()) {
+//            mActivityTitle = data.getString(HabitContract.ActivityBestQueryHelper.COLUMN_ACTIVITY_TITLE);
+//            if(!mIsTwoPane) {
+//                getActivity().setTitle(mActivityTitle);
+//            }
+//            mHigherIsBetter = data.getInt(HabitContract.ActivityBestQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1;
+//            mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST7)));
+//            mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)));
+//            mFooterBest90.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST90)));
+//        }
+//    }
+
+
+//    @Override
+//    public void onLoaderReset(Loader<Cursor> loader) {
+//        mHabitDataAdapter.swapCursor(null);
+//    }
 
     // Decide if the graph is shown (nothing selected) or the MultiSelectDialog is shown (at least one item selected)
-    private void ChangeTopHalf(boolean graph) {
-        if(graph) {
-            mGraph.setVisibility(View.VISIBLE);
-            mMultiselectDialog.setVisibility(View.INVISIBLE);
-        } else {
-            mGraph.setVisibility(View.INVISIBLE);
-            mMultiselectDialog.setVisibility(View.VISIBLE);
-        }
+//    public void ChangeTopHalf(boolean graph) {
+//        if(graph) {
+//            mGraph.setVisibility(View.VISIBLE);
+//            mMultiselectDialog.setVisibility(View.INVISIBLE);
+//        } else {
+//            mGraph.setVisibility(View.INVISIBLE);
+//            mMultiselectDialog.setVisibility(View.VISIBLE);
+//        }
+//    }
+
+    @Override
+    public void showGraph() {
+        mGraph.setVisibility(View.VISIBLE);
+        mMultiselectDialog.setVisibility(View.INVISIBLE);
+        mHabitDataListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mHabitDataListView.setOnItemClickListener(mItemClickListener);
+            }
+        } , 300);
+    }
+
+    @Override
+    public void showMultiSelectDialog() {
+        mHabitDataListView.setOnItemClickListener(null);
+        mGraph.setVisibility(View.INVISIBLE);
+        mMultiselectDialog.setVisibility(View.VISIBLE);
     }
 
     // Whenever a user selects or unselects a HabidData point by swiping, this will be called.
-    @Override
-    public void ChecksChanged(ArrayList<Long> checkedItems) {
-        if(checkedItems.size() > 0) {
-            mHabitDataListView.setOnItemClickListener(null);
-            ChangeTopHalf(false);
-        }
-        else {
-            ChangeTopHalf(true);
-            mHabitDataListView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mHabitDataListView.setOnItemClickListener(mItemClickListener);
-                }
-            } , 300);
-        }
-    }
+//    @Override
+//    public void ChecksChanged(ArrayList<Long> checkedItems) {
+//        if(checkedItems.size() > 0) {
+//            mHabitDataListView.setOnItemClickListener(null);
+//            ChangeTopHalf(false);
+//        }
+//        else {
+//            ChangeTopHalf(true);
+//            mHabitDataListView.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mHabitDataListView.setOnItemClickListener(mItemClickListener);
+//                }
+//            } , 300);
+//        }
+//    }
+//
+//
 
     public View.OnClickListener mMultiSelectClickListener = new View.OnClickListener(){
         @Override
@@ -502,9 +575,7 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
         imm.hideSoftInputFromWindow(mGraph.getWindowToken(), 0);
     }
     public void MultiSelectOKClicked(View view) {
-        //force validation
-        mMultiSelectFieldValidator.afterTextChanged(null);
-        if(!mMultiSelectFieldHasError) {
+        if(groupValidator.ValidateAll()) {
             ArrayList<Long> selectedDates = (ArrayList<Long>) mHabitDataAdapter.GetSelectedDates().clone();
             mHabitDataAdapter.ClearCheckmarks();
             EditText field = (EditText) mMultiselectDialog.findViewById(R.id.multiselect_value_edittext);
@@ -527,4 +598,10 @@ public class HabitActivityFragment extends Fragment implements LoaderManager.Loa
             startActivity(intent);
         }
     };
+
+    @Override
+    public void onStop() {
+        mPresenter.unsubscribe();
+        super.onStop();
+    }
 }

@@ -1,4 +1,4 @@
-package com.outlook.notyetapp.utilities;
+package com.outlook.notyetapp.utilities.library;
 
 import com.daimajia.swipe.SwipeLayout;
 

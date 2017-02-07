@@ -1,4 +1,4 @@
-package com.outlook.notyetapp;
+package com.outlook.notyetapp.screen.habit;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
+import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
 

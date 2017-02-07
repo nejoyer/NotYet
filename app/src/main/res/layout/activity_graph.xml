@@ -5,7 +5,7 @@
     android:id="@+id/activity_graph"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.outlook.notyetapp.GraphActivity">
+    tools:context="com.outlook.notyetapp.screen.graph.GraphActivity">
     <com.google.android.gms.ads.AdView
         android:id="@+id/graph_banner_ad"
         android:layout_alignParentBottom="true"

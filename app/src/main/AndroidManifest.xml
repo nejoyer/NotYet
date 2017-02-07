@@ -31,7 +31,7 @@
             android:name=".CreateActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".HabitActivity"
+            android:name=".screen.habit.HabitActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -41,10 +41,10 @@
         <activity
             android:name=".ActivitySettingsActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".HabitActivity">
+            android:parentActivityName=".screen.habit.HabitActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.outlook.notyetapp.HabitActivity" />
+                android:value="com.outlook.notyetapp.screen.habit.HabitActivity" />
         </activity>
         <activity
             android:name=".SortActivity"
@@ -63,12 +63,12 @@
                 android:value="com.outlook.notyetapp.MainActivity" />
         </activity>
         <activity
-            android:name=".GraphActivity"
+            android:name=".screen.graph.GraphActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".HabitActivity">
+            android:parentActivityName=".screen.habit.HabitActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.outlook.notyetapp.HabitActivity" />
+                android:value="com.outlook.notyetapp.screen.habit.HabitActivity" />
         </activity>
         <activity
             android:name=".HelpActivity"

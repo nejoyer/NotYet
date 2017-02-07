@@ -1,4 +1,4 @@
-package com.outlook.notyetapp;
+package com.outlook.notyetapp.screen.habit;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 
 // When you tap on an activity in the Main ListView, you see this activity which includes a graph and list of data points.

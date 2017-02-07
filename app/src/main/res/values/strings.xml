@@ -53,6 +53,7 @@
     <string name="action_habit_settings">Settings</string>
     <string name="action_habit_delete">Delete...</string>
     <string name="add_more_history">Tap to add more history.</string>
+    <string name="add_more_history_dialog_question">How many days to add?</string>
     <string name="habit_data_update_title">Updating...</string>
     <string name="best_label">Best</string>
     <string name="date_label">Date</string>
@@ -62,6 +63,9 @@
     <string name="a90_column_label">A90</string>
     <string name="today_label">Today</string>
     <string name="new_value_label">New value:</string>
+    <string name="delete_habit_dialog_title">Delete Activity?</string>
+    <string name="delete_habit_dialog_message">Do you really want to delete this activity and all associated data?</string>
+    <string name="delete_habit_completed_toast">Activity deleted</string>
 
     <!--Main Settings-->
     <string name="title_activity_settings">Settings</string>
@@ -73,6 +77,7 @@
 
     <!--Text Validation-->
     <string name="cannot_be_empty">Cannot be empty</string>
+    <string name="must_be_a_number">Must be a number</string>
 
     <!--CreateActivity-->
     <string name="error_creating_activity_title">Error Creating Activity</string>

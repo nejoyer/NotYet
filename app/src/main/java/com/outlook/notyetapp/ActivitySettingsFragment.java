@@ -19,7 +19,10 @@ import android.widget.ToggleButton;
 
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.data.HabitContract.ActivitiesEntry;
-import com.outlook.notyetapp.utilities.TextValidator;
+import com.outlook.notyetapp.utilities.HabitValueValidator;
+import com.outlook.notyetapp.utilities.TitleValidator;
+import com.outlook.notyetapp.utilities.library.GroupValidator;
+import com.outlook.notyetapp.utilities.library.TextValidator;
 
 public class ActivitySettingsFragment extends Fragment {
 
@@ -30,14 +33,16 @@ public class ActivitySettingsFragment extends Fragment {
     private static final String[] DAYS_OF_WEEK = new String[]{"S", "M", "T", "W", "T", "F", "S"};
     private static final int[] DAYS_OF_WEEK_FLAGS = new int[]{0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40};
 
-    private TextValidator mTitleValidator;
-    private boolean mTitleError = true;
-    private TextValidator mHistoricalValidator;
-    private boolean mHistoricalError = true;
-    private TextValidator mForecastValidator;
-    private boolean mForecastError = true;
-    private TextValidator mSwipeValidator;
-    private boolean mSwipeError = true;
+//    private TextValidator mTitleValidator;
+//    private boolean mTitleError = true;
+//    private TextValidator mHistoricalValidator;
+//    private boolean mHistoricalError = true;
+//    private TextValidator mForecastValidator;
+//    private boolean mForecastError = true;
+//    private TextValidator mSwipeValidator;
+//    private boolean mSwipeError = true;
+
+    private GroupValidator groupValidator;
 
 
 
@@ -111,77 +116,84 @@ public class ActivitySettingsFragment extends Fragment {
             putSettingsToUI(activitySettingsCursor);
         }
 
+        groupValidator = new GroupValidator(getContext());
+
         // Add validators to the EditText fields.
         EditText titleEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_title_edit);
-        mTitleValidator = new TextValidator(titleEdit) {
-            @Override
-            public void validate(TextView textView, String text) {
-                if(text.length() < 1) {
-                    textView.setError(getString(R.string.cannot_be_empty));
-                    mTitleError = true;
-                }
-                else {
-                    mTitleError = false;
-                }
-            }
-        };
-        titleEdit.addTextChangedListener(mTitleValidator);
+        groupValidator.AddFieldToValidate(titleEdit, TitleValidator.class);
+//        mTitleValidator = new TextValidator(titleEdit) {
+//            @Override
+//            public void validate(TextView textView, String text) {
+//                if(text.length() < 1) {
+//                    textView.setError(getString(R.string.cannot_be_empty));
+//                    mTitleError = true;
+//                }
+//                else {
+//                    mTitleError = false;
+//                }
+//            }
+//        };
+//        titleEdit.addTextChangedListener(mTitleValidator);
 
         EditText historicalEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_historical_edit);
-        mHistoricalValidator = new TextValidator(historicalEdit) {
-            @Override
-            public void validate(TextView textView, String text) {
-                if(text.length() < 1) {
-                    textView.setError(getString(R.string.cannot_be_empty));
-                    mHistoricalError = true;
-                }
-                else {
-                    mHistoricalError = false;
-                }
-            }
-        };
-        historicalEdit.addTextChangedListener(mHistoricalValidator);
+        groupValidator.AddFieldToValidate(historicalEdit, HabitValueValidator.class);
+//        mHistoricalValidator = new TextValidator(historicalEdit) {
+//            @Override
+//            public void validate(TextView textView, String text) {
+//                if(text.length() < 1) {
+//                    textView.setError(getString(R.string.cannot_be_empty));
+//                    mHistoricalError = true;
+//                }
+//                else {
+//                    mHistoricalError = false;
+//                }
+//            }
+//        };
+//        historicalEdit.addTextChangedListener(mHistoricalValidator);
 
         EditText forecastEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_forecast_edit);
-        mForecastValidator = new TextValidator(forecastEdit) {
-            @Override
-            public void validate(TextView textView, String text) {
-                if(text.length() < 1) {
-                    textView.setError(getString(R.string.cannot_be_empty));
-                    mForecastError = true;
-                }
-                else {
-                    mForecastError = false;
-                }
-            }
-        };
-        forecastEdit.addTextChangedListener(mForecastValidator);
+        groupValidator.AddFieldToValidate(forecastEdit, HabitValueValidator.class);
+//        mForecastValidator = new TextValidator(forecastEdit) {
+//            @Override
+//            public void validate(TextView textView, String text) {
+//                if(text.length() < 1) {
+//                    textView.setError(getString(R.string.cannot_be_empty));
+//                    mForecastError = true;
+//                }
+//                else {
+//                    mForecastError = false;
+//                }
+//            }
+//        };
+//        forecastEdit.addTextChangedListener(mForecastValidator);
 
         EditText swipeEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_one_swipe_edit);
-        mSwipeValidator = new TextValidator(swipeEdit) {
-            @Override
-            public void validate(TextView textView, String text) {
-                if(text.length() < 1) {
-                    textView.setError(getString(R.string.cannot_be_empty));
-                    mSwipeError = true;
-                }
-                else {
-                    mSwipeError = false;
-                }
-            }
-        };
-        swipeEdit.addTextChangedListener(mSwipeValidator);
+        groupValidator.AddFieldToValidate(swipeEdit, HabitValueValidator.class);
+//        mSwipeValidator = new TextValidator(swipeEdit) {
+//            @Override
+//            public void validate(TextView textView, String text) {
+//                if(text.length() < 1) {
+//                    textView.setError(getString(R.string.cannot_be_empty));
+//                    mSwipeError = true;
+//                }
+//                else {
+//                    mSwipeError = false;
+//                }
+//            }
+//        };
+//        swipeEdit.addTextChangedListener(mSwipeValidator);
 
         return mFragmentView;
     }
 
     // Run all three validators and return if there are any errors.
     public boolean validate(){
-        mTitleValidator.afterTextChanged(null);
-        mHistoricalValidator.afterTextChanged(null);
-        mForecastValidator.afterTextChanged(null);
-        mSwipeValidator.afterTextChanged(null);
-        return mTitleError || mHistoricalError || mForecastError || mSwipeError;
+//        mTitleValidator.afterTextChanged(null);
+//        mHistoricalValidator.afterTextChanged(null);
+//        mForecastValidator.afterTextChanged(null);
+//        mSwipeValidator.afterTextChanged(null);
+//        return mTitleError || mHistoricalError || mForecastError || mSwipeError;
+        return groupValidator.ValidateAll();
     }
 
     @Override
@@ -226,22 +238,22 @@ public class ActivitySettingsFragment extends Fragment {
         EditText titleEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_title_edit));
         String title = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_ACTIVITY_TITLE);
         titleEditText.setText(title);
-        mTitleError = false;
+//        mTitleError = false;
 
         EditText historicalEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_historical_edit));
         String historical = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_HISTORICAL);
         historicalEditText.setText(historical);
-        mHistoricalError = false;
+//        mHistoricalError = false;
 
         EditText forecastEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_forecast_edit));
         String forecast = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_FORECAST);
         forecastEditText.setText(forecast);
-        mForecastError = false;
+//        mForecastError = false;
 
         EditText swipeEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_one_swipe_edit));
         String swipe = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_SWIPE_VALUE);
         swipeEditText.setText(swipe);
-        mForecastError = false;
+//        mForecastError = false;
 
         ToggleButton higherIsBetterToggle = ((ToggleButton)mFragmentView.findViewById(R.id.activity_settings_higher_is_better_toggle));
         higherIsBetterToggle.setChecked(cursor.getInt(HabitContract.ActivitySettingsQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1);

@@ -5,19 +5,27 @@ import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 // Information to the user about this application and the application's attributions.
 public class AboutActivity extends AppCompatActivity {
+
+    @BindView(R.id.about_email)
+    TextView aboutEmail;
+
+    @BindView(R.id.about_attribution)
+    TextView aboutAttribution;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        TextView aboutEmail = (TextView)findViewById(R.id.about_email);
-        aboutEmail.setMovementMethod(LinkMovementMethod.getInstance());
+        ButterKnife.bind(this);
 
-        TextView aboutAttribution = (TextView)findViewById(R.id.about_attribution);
         //To make the links clickable
+        aboutEmail.setMovementMethod(LinkMovementMethod.getInstance());
         aboutAttribution.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

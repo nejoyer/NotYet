@@ -1,6 +1,4 @@
-package com.outlook.notyetapp.test;
-
-import com.outlook.notyetapp.RollingAverageHelper;
+package com.outlook.notyetapp;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,9 +6,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Neil on 10/11/2016.
- */
 public class RollingAverageHelperTest {
     private RollingAverageHelper mHelper;
 
@@ -29,7 +24,7 @@ public class RollingAverageHelperTest {
 
     @Test
     public void average7_isCorrect() throws Exception {
-        assertEquals(85.5f, mHelper.GetAverage7(), 0.00001f);
+        assertEquals(87f, mHelper.GetAverage7(), 0.00001f);
     }
 
     @Test

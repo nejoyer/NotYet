@@ -18,7 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
-import com.outlook.notyetapp.utilities.SwipeOpenListener;
+import com.outlook.notyetapp.utilities.library.SwipeOpenListener;
 
 import java.util.ArrayList;
 

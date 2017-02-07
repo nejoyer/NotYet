@@ -27,9 +27,11 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.outlook.notyetapp.data.DBHelper;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.screen.habit.HabitActivity;
+import com.outlook.notyetapp.screen.habit.HabitActivityFragment;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.EULAUtils;
-import com.outlook.notyetapp.utilities.SwipeOpenListener;
+import com.outlook.notyetapp.utilities.library.SwipeOpenListener;
 
 import java.util.Calendar;
 
@@ -141,11 +143,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        mMainListView.setAdapter(mActivityAdapter);
-
         if(!mHideHeader) {
             mMainListView.addHeaderView(GenerateHelpHeader());
         }
+
+        mMainListView.setAdapter(mActivityAdapter);
 
         getSupportLoaderManager().initLoader(HabitContract.ActivitiesTodaysStatsQueryHelper.ACTIVITES_TODAYS_STATS_LOADER, null, this);
 

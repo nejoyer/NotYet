@@ -400,11 +400,6 @@ public class CustomLegendRenderer extends LegendRenderer {
         public LineGraphSeries<DataPoint> mSeries;
         public RectF mSeriesLegendRect;
         public int mColor;
-
-//        public LegendMapping(LineGraphSeries<DataPoint> mSeries, RectF mSeriesLegendRect) {
-//            this.mSeries = mSeries;
-//            this.mSeriesLegendRect = mSeriesLegendRect;
-//        }
     }
 }
 
