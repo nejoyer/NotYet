@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -47,6 +48,7 @@ import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolve
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class HabitActivityFragment extends Fragment implements HabitActivityFragmentContract.View{
@@ -61,6 +63,8 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     public boolean mHigherIsBetter;
     public boolean mIsTwoPane;
     public String mActivityTitle;
+
+    private Date todayDate = null;
 
     private ListView mHabitDataListView;
 
@@ -429,7 +433,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
             mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
             mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-            gu.ShowTodayLine(mGraph);
+            gu.ShowTodayLine(mGraph, getTodayDate());
 //            gu.AddTodayLine(mGraph, mTodaySeries);
         }
     }
@@ -603,5 +607,14 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     public void onStop() {
         mPresenter.unsubscribe();
         super.onStop();
+    }
+
+    private Date getTodayDate() {
+        if(todayDate == null) {
+            long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(mGraph.getContext()).getString(mGraph.getContext().getString(R.string.pref_day_change_key), "0"));
+            todayDate = HabitContract.HabitDataEntry.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
+        }
+
+        return todayDate;
     }
 }

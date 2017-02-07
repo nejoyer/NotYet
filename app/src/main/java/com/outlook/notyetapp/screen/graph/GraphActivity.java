@@ -3,6 +3,7 @@ package com.outlook.notyetapp.screen.graph;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolver;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,8 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
 
     public static double mMinX = 0;
     public static double mMaxX = 0;
+
+    private Date todayDate = null;
 
     public long mActivityId;
     public float mForecast;
@@ -132,13 +136,13 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
     @Override
     public void showTodayLine() {
         GraphUtilities gu = new GraphUtilities();
-        gu.ShowTodayLine(mGraph);
+        gu.ShowTodayLine(mGraph, getTodayDate());
     }
 
     @Override
     public void hideTodayLine() {
         GraphUtilities gu = new GraphUtilities();
-        gu.HideTodayLine(mGraph);
+        gu.HideTodayLine(mGraph, getTodayDate());
     }
 
     private void toggleSeries(CustomLegendRenderer.LegendMapping map)
@@ -165,10 +169,10 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
             map.mColor = map.mSeries.getColor();
             map.mSeries.setColor(Color.TRANSPARENT);
         }
-        GraphUtilities gu = new GraphUtilities();
-        gu.HideTodayLine(mGraph);
+
+        hideTodayLine();
         mGraph.invalidate();
-        gu.ShowTodayLine(mGraph);
+        showTodayLine();
     }
 
     @Override
@@ -227,6 +231,15 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
         mGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
         mGraph.getLegendRenderer().setVisible(true);
 
-        gu.ShowTodayLine(mGraph);
+        gu.ShowTodayLine(mGraph, getTodayDate());
+    }
+
+    private Date getTodayDate() {
+        if(todayDate == null) {
+            long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(mGraph.getContext()).getString(mGraph.getContext().getString(R.string.pref_day_change_key), "0"));
+            todayDate = HabitContract.HabitDataEntry.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
+        }
+
+        return todayDate;
     }
 }

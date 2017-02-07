@@ -47,14 +47,14 @@ public class GraphUtilities {
 //        graph.addSeries(todaySeries);
 //    }
 
-    public void ShowTodayLine(GraphView graphView){
-        ShowHideTodayLine(graphView, false);
+    public void ShowTodayLine(GraphView graphView, Date todayDate){
+        ShowHideTodayLine(graphView, todayDate, false);
     }
-    public void HideTodayLine(GraphView graphView){
-        ShowHideTodayLine(graphView, true);
+    public void HideTodayLine(GraphView graphView, Date todayDate){
+        ShowHideTodayLine(graphView, todayDate, true);
     }
 
-    private void ShowHideTodayLine(GraphView graphView, boolean hideTodayLine){
+    private void ShowHideTodayLine(GraphView graphView, Date todayDate, boolean hideTodayLine){
         LineGraphSeries<DataPoint> todaySeries = null;
         Context context = graphView.getContext();
         String todayLabel = context.getString(R.string.today_label);
@@ -82,8 +82,8 @@ public class GraphUtilities {
         double minY = graphView.getViewport().getMinY(false);
         double maxY = graphView.getViewport().getMaxY(false);
 
-        long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_day_change_key), "0"));
-        Date todayDate = HabitContract.HabitDataEntry.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
+//        long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.pref_day_change_key), "0"));
+//        Date todayDate = HabitContract.HabitDataEntry.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
 
         DataPoint[] todayPoints = new DataPoint[]{
                 new DataPoint(todayDate, minY),
