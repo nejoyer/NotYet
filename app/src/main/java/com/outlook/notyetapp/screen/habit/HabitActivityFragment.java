@@ -47,7 +47,6 @@ import com.outlook.notyetapp.utilities.library.GroupValidator;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +55,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class HabitActivityFragment extends Fragment implements HabitActivityFragmentContract.View{
@@ -73,26 +76,27 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
     private Date todayDate = null;
 
-    private ListView mHabitDataListView;
+    @BindView(R.id.habit_listview)
+    ListView mHabitDataListView;
 
     private HabitDataAdapter mHabitDataAdapter;
 
-    private TextView mFooterBest7;
-    private TextView mFooterBest30;
-    private TextView mFooterBest90;
+    @BindView(R.id.footer_best_7)
+    TextView mFooterBest7;
+    @BindView(R.id.footer_best_30)
+    TextView mFooterBest30;
+    @BindView(R.id.footer_best_90)
+    TextView mFooterBest90;
 
-    private LinearLayout mMultiselectDialog = null;
-    private EditText mMultiSelectDialogValueField = null;
+    @BindView(R.id.multiselect_value_dialog)
+    LinearLayout mMultiselectDialog = null;
+    @BindView(R.id.multiselect_value_edittext)
+    EditText mMultiSelectDialogValueField = null;
 
     private GroupValidator groupValidator;
 
-    private GraphView mGraph = null;
-
-    private LineGraphSeries<DataPoint> mValuesDataSeries = new LineGraphSeries<DataPoint>();
-    private LineGraphSeries<DataPoint> mAvg7DataSeries = new LineGraphSeries<DataPoint>();
-    private LineGraphSeries<DataPoint> mAvg30DataSeries = new LineGraphSeries<DataPoint>();
-    private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
-    private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
+    @BindView(R.id.habit_graph)
+    GraphView mGraph = null;
 
     @Inject
     HabitActivityFragmentContract.ActionListener mPresenter;
@@ -145,14 +149,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_habit_activity, container, false);
 
-        mGraph = (GraphView) fragmentView.findViewById(R.id.habit_graph);
-        mGraph.setOnClickListener(mGraphClicked);
-        mHabitDataListView = (ListView)fragmentView.findViewById(R.id.habit_listview);
-
-        View footerParent = fragmentView.findViewById(R.id.habit_data_footer_layout);
-        mFooterBest7 = (TextView)footerParent.findViewById(R.id.footer_best_7);
-        mFooterBest30 = (TextView)footerParent.findViewById(R.id.footer_best_30);
-        mFooterBest90 = (TextView)footerParent.findViewById(R.id.footer_best_90);
+        ButterKnife.bind(this, fragmentView);
 
         LinearLayout footer = (LinearLayout)inflater.inflate(R.layout.habitdata_footer_add_more_history, null);
         footer.setOnClickListener(mFooterClickListener);
@@ -160,14 +157,8 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
         groupValidator = new GroupValidator(getContext());
 
-        mMultiselectDialog = (LinearLayout) fragmentView.findViewById(R.id.multiselect_value_dialog);
-        mMultiSelectDialogValueField = (EditText) mMultiselectDialog.findViewById(R.id.multiselect_value_edittext);
-
         mMultiSelectDialogValueField.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         groupValidator.AddFieldToValidate(mMultiSelectDialogValueField, HabitValueValidator.class);
-
-        mMultiselectDialog.findViewById(R.id.multiselect_cancel_button).setOnClickListener(mMultiSelectClickListener);
-        mMultiselectDialog.findViewById(R.id.multiselect_ok_button).setOnClickListener(mMultiSelectClickListener);
 
         mHabitDataAdapter = new HabitDataAdapter(getContext(), null, 0);
 
@@ -518,17 +509,6 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 //        mHabitDataAdapter.swapCursor(null);
 //    }
 
-    // Decide if the graph is shown (nothing selected) or the MultiSelectDialog is shown (at least one item selected)
-//    public void ChangeTopHalf(boolean graph) {
-//        if(graph) {
-//            mGraph.setVisibility(View.VISIBLE);
-//            mMultiselectDialog.setVisibility(View.INVISIBLE);
-//        } else {
-//            mGraph.setVisibility(View.INVISIBLE);
-//            mMultiselectDialog.setVisibility(View.VISIBLE);
-//        }
-//    }
-
     @Override
     public void showGraph() {
         mGraph.setVisibility(View.VISIBLE);
@@ -548,48 +528,15 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         mMultiselectDialog.setVisibility(View.VISIBLE);
     }
 
-    // Whenever a user selects or unselects a HabidData point by swiping, this will be called.
-//    @Override
-//    public void ChecksChanged(ArrayList<Long> checkedItems) {
-//        if(checkedItems.size() > 0) {
-//            mHabitDataListView.setOnItemClickListener(null);
-//            ChangeTopHalf(false);
-//        }
-//        else {
-//            ChangeTopHalf(true);
-//            mHabitDataListView.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mHabitDataListView.setOnItemClickListener(mItemClickListener);
-//                }
-//            } , 300);
-//        }
-//    }
-//
-//
-
-    public View.OnClickListener mMultiSelectClickListener = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-            switch (v.getId())
-            {
-                case R.id.multiselect_cancel_button:
-                    MultiSelectCancelClicked(v);
-                    break;
-                case R.id.multiselect_ok_button:
-                    MultiSelectOKClicked(v);
-                    break;
-            }
-        }
-    };
-
+    @OnClick(R.id.multiselect_cancel_button)
     public void MultiSelectCancelClicked(View view) {
         mHabitDataAdapter.ClearCheckmarks();
-        //force re-render... there might be a more efficient way to do this?
-        getActivity().getContentResolver().notifyChange(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), null);
+        //force re-render... there might be a more efficient way to do this? But this is fast enough.
+        getContext().getContentResolver().notifyChange(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), null);
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mGraph.getWindowToken(), 0);
     }
+    @OnClick(R.id.multiselect_ok_button)
     public void MultiSelectOKClicked(View view) {
         if(groupValidator.ValidateAll()) {
             ArrayList<Long> selectedDates = (ArrayList<Long>) mHabitDataAdapter.GetSelectedDates().clone();
@@ -603,17 +550,15 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     }
 
     // If the user clicks on the graph, go to a full screen graph view.
-    public View.OnClickListener mGraphClicked = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), GraphActivity.class);
-            intent.putExtra(GraphActivity.ACTIVITY_FORECAST_KEY, mForecast);
-            intent.putExtra(GraphActivity.ACTIVITY_ID_KEY, mActivityId);
-            intent.putExtra(GraphActivity.ACTIVITY_TITLE_KEY, mActivityTitle);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
-    };
+    @OnClick(R.id.habit_graph)
+    public void graphClicked(View v) {
+        Intent intent = new Intent(getActivity(), GraphActivity.class);
+        intent.putExtra(GraphActivity.ACTIVITY_FORECAST_KEY, mForecast);
+        intent.putExtra(GraphActivity.ACTIVITY_ID_KEY, mActivityId);
+        intent.putExtra(GraphActivity.ACTIVITY_TITLE_KEY, mActivityTitle);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
     @Override
     public void onStop() {
