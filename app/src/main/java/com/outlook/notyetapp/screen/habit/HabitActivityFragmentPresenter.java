@@ -6,7 +6,7 @@ import android.net.Uri;
 import com.jjoe64.graphview.series.DataPoint;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.screen.habit.HabitActivityFragmentContract.ActionListener;
-import com.outlook.notyetapp.utilities.GraphUtilities;
+import com.outlook.notyetapp.utilities.CursorToDataPointListHelper;
 import com.pushtorefresh.storio.contentresolver.StorIOContentResolver;
 import com.pushtorefresh.storio.contentresolver.queries.Query;
 
@@ -19,25 +19,21 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.exceptions.Exceptions;
 import rx.observables.ConnectableObservable;
 
-/**
- * Created by Neil on 2/1/2017.
- */
-
 public class HabitActivityFragmentPresenter implements ActionListener {
 
     private HabitActivityFragmentContract.View view;
     private StorIOContentResolver storIOContentResolver;
-    private GraphUtilities graphUtilities;
+    private CursorToDataPointListHelper cursorToDataPointListHelper;
 
     private Subscription cursorSubscription = null;
     private Subscription listSubscription = null;
     private Subscription bestSubscription = null;
     private Subscription sharedSubscription = null;
 
-    public HabitActivityFragmentPresenter(HabitActivityFragmentContract.View view, StorIOContentResolver storIOContentResolver, GraphUtilities graphUtilities) {
+    public HabitActivityFragmentPresenter(HabitActivityFragmentContract.View view, StorIOContentResolver storIOContentResolver, CursorToDataPointListHelper cursorToDataPointListHelper) {
         this.view = view;
         this.storIOContentResolver = storIOContentResolver;
-        this.graphUtilities = graphUtilities;
+        this.cursorToDataPointListHelper = cursorToDataPointListHelper;
     }
 
     @Override
@@ -75,7 +71,7 @@ public class HabitActivityFragmentPresenter implements ActionListener {
                 }
         );
 
-        listSubscription = observable.compose(graphUtilities.GetCursorToDataPointListMapFunction(forecast))
+        listSubscription = observable.compose(cursorToDataPointListHelper.GetCursorToDataPointListMapFunction(forecast))
                 .subscribe(new Subscriber<List<DataPoint[]>>() {
                                @Override
                                public void onCompleted() {

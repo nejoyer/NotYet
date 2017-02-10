@@ -32,6 +32,11 @@ import com.outlook.notyetapp.ActivitySettingsActivity;
 import com.outlook.notyetapp.MainActivity;
 import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.UpdateHabitDataTask;
+
+import com.outlook.notyetapp.dagger.ContextModule;
+import com.outlook.notyetapp.dagger.DaggerHabitActivityFragmentComponent;
+import com.outlook.notyetapp.dagger.HabitActivityFragmentContractViewModule;
+import com.outlook.notyetapp.data.DateConverter;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.screen.graph.GraphActivity;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
@@ -43,13 +48,15 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
+
 
 public class HabitActivityFragment extends Fragment implements HabitActivityFragmentContract.View{
 
@@ -87,7 +94,14 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     private LineGraphSeries<DataPoint> mAvg90DataSeries = new LineGraphSeries<DataPoint>();
     private LineGraphSeries<DataPoint> mTodaySeries = new LineGraphSeries<DataPoint>();
 
+    @Inject
     HabitActivityFragmentContract.ActionListener mPresenter;
+
+    @Inject
+    GraphUtilities mGraphUtilities;
+
+    @Inject
+    public DateConverter mDateConverter;
 
 
     // Use newInstance instead of this if possible to avoid missing a param
@@ -159,12 +173,12 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
         mHabitDataListView.setOnItemClickListener(mItemClickListener);
 
-        GraphUtilities graphUtilities = new GraphUtilities();
-        //todo DI
-        mPresenter = new HabitActivityFragmentPresenter(this,
-                DefaultStorIOContentResolver.builder().contentResolver(getContext().getContentResolver()).build(),
-                graphUtilities
-        );
+
+        DaggerHabitActivityFragmentComponent.builder()
+                .habitActivityFragmentContractViewModule(new HabitActivityFragmentContractViewModule(this))
+                .contextModule(new ContextModule(getContext()))
+                .build().inject(this);
+
         mPresenter.loadHabitData(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), mForecast);
         mPresenter.loadBestData(HabitContract.ActivitiesEntry.buildActivityUri(mActivityId));
 
@@ -416,8 +430,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     @Override
     public void renderHabitDataToGraph(List<DataPoint[]> data) {
         if(data.size() > 0) {
-            GraphUtilities gu = new GraphUtilities();
-            gu.AddSeriesFromData(mGraph, data);
+            mGraphUtilities.AddSeriesFromData(mGraph, data);
 
             DataPoint[] valDataPoints = data.get(0);
             double minX = valDataPoints[valDataPoints.length - 180].getX();
@@ -433,8 +446,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
             mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
             mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-            gu.ShowTodayLine(mGraph, getTodayDate());
-//            gu.AddTodayLine(mGraph, mTodaySeries);
+            mGraphUtilities.ShowTodayLine(mGraph, getTodayDate());
         }
     }
 
@@ -612,7 +624,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     private Date getTodayDate() {
         if(todayDate == null) {
             long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(mGraph.getContext()).getString(mGraph.getContext().getString(R.string.pref_day_change_key), "0"));
-            todayDate = HabitContract.HabitDataEntry.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
+            todayDate = mDateConverter.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
         }
 
         return todayDate;

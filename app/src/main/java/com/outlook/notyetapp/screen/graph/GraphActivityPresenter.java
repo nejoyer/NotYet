@@ -1,11 +1,10 @@
 package com.outlook.notyetapp.screen.graph;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.outlook.notyetapp.data.HabitContract;
-import com.outlook.notyetapp.utilities.GraphUtilities;
+import com.outlook.notyetapp.utilities.CursorToDataPointListHelper;
 import com.pushtorefresh.storio.contentresolver.StorIOContentResolver;
 import com.pushtorefresh.storio.contentresolver.queries.Query;
 
@@ -17,23 +16,18 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.exceptions.Exceptions;
 import rx.schedulers.Schedulers;
 
-
-/**
- * Created by Neil on 1/16/2017.
- */
-
 public class GraphActivityPresenter implements GraphActivityContract.ActionListener {
 
     private GraphActivityContract.View view;
     private StorIOContentResolver storIOContentResolver;
-    GraphUtilities graphUtilities;
+    CursorToDataPointListHelper cursorToDataPointListHelper;
 
     private Subscription subscription = null;
 
-    public GraphActivityPresenter(GraphActivityContract.View view, StorIOContentResolver storIOContentResolver, GraphUtilities graphUtilities) {
+    public GraphActivityPresenter(GraphActivityContract.View view, StorIOContentResolver storIOContentResolver, CursorToDataPointListHelper cursorToDataPointListHelper) {
         this.view = view;
         this.storIOContentResolver = storIOContentResolver;
-        this.graphUtilities = graphUtilities;
+        this.cursorToDataPointListHelper = cursorToDataPointListHelper;
     }
 
     @Override
@@ -48,10 +42,7 @@ public class GraphActivityPresenter implements GraphActivityContract.ActionListe
                                 .sortOrder(HabitContract.HabitDataQueryHelper.SORT_BY_DATE_DESC)
                                 .build()
                 ).prepare().asRxObservable()
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .compose(graphUtilities.GetCursorToDataPointListMapFunction(forecast))
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .compose(cursorToDataPointListHelper.GetCursorToDataPointListMapFunction(forecast))
                 .subscribe(new Subscriber<List<DataPoint[]>>() {
                                @Override
                                public void onCompleted() {

@@ -7,16 +7,21 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.screen.habit.HabitActivityFragmentContract;
 import com.outlook.notyetapp.screen.habit.HabitActivityFragmentPresenter;
-import com.outlook.notyetapp.utilities.GraphUtilities;
+import com.outlook.notyetapp.utilities.CursorToDataPointListHelper;
 import com.pushtorefresh.storio.contentresolver.StorIOContentResolver;
+import com.pushtorefresh.storio.contentresolver.operations.get.PreparedGet;
+import com.pushtorefresh.storio.contentresolver.operations.get.PreparedGetCursor;
 import com.pushtorefresh.storio.contentresolver.queries.Query;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Answers;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,20 +31,19 @@ import rx.Observable;
 import rx.Scheduler;
 import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
+import rx.internal.operators.OperatorPublish;
 import rx.observables.ConnectableObservable;
 import rx.schedulers.Schedulers;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by Neil on 2/2/2017.
- */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({PreparedGet.Builder.class, PreparedGetCursor.Builder.class, PreparedGetCursor.CompleteBuilder.class, Observable.class, ConnectableObservable.class, OperatorPublish.class})
 public class HabitActivityFragmentPresenterTest {
     private static final String MOCK_TITLE = "mock title";
     private static final int MOCK_HIGHER_IS_BETTER = 1;
@@ -50,11 +54,16 @@ public class HabitActivityFragmentPresenterTest {
     @Mock
     HabitActivityFragmentContract.View view;
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    StorIOContentResolver storIOContentResolver;
-
     @Mock
-    GraphUtilities graphUtilities;
+    CursorToDataPointListHelper cursorToDataPointListHelper;
+
+    //Mocked by PowerMock
+    StorIOContentResolver mockStorIOContentResolver;
+    PreparedGet.Builder mockGetResult;
+    PreparedGetCursor.Builder mockCursorResult;
+    PreparedGetCursor.CompleteBuilder mockWithQueryResult;
+    PreparedGetCursor mockPrepareResult;
+    Observable mockObservable, mockObservable2;
 
     private HabitActivityFragmentPresenter habitActivityFragmentPresenter;
 
@@ -69,7 +78,16 @@ public class HabitActivityFragmentPresenterTest {
             }
         });
 
-        habitActivityFragmentPresenter = new HabitActivityFragmentPresenter(this.view, this.storIOContentResolver, this.graphUtilities);
+        // Use PowerMock to create these mocks because some of them are "final" and mockito mocking doesn't work.
+        mockStorIOContentResolver = PowerMockito.mock(StorIOContentResolver.class);
+        mockGetResult = PowerMockito.mock(PreparedGet.Builder.class);
+        mockCursorResult = PowerMockito.mock(PreparedGetCursor.Builder.class);
+        mockWithQueryResult = PowerMockito.mock(PreparedGetCursor.CompleteBuilder.class);
+        mockPrepareResult = PowerMockito.mock(PreparedGetCursor.class);
+        mockObservable = PowerMockito.mock(Observable.class);
+        mockObservable2 = PowerMockito.mock(Observable.class);
+
+        habitActivityFragmentPresenter = new HabitActivityFragmentPresenter(this.view, this.mockStorIOContentResolver, this.cursorToDataPointListHelper);
     }
 
     @After
@@ -81,21 +99,19 @@ public class HabitActivityFragmentPresenterTest {
     public void loadHabitData() {
         Cursor cursor = mock(Cursor.class);
         List<DataPoint[]> dataPoints = Arrays.asList(new DataPoint[]{new DataPoint(5,5)}, new DataPoint[]{new DataPoint(6,6)});
-        ConnectableObservable spyConnectableObservable = spy(Observable.just(cursor).publish());
+        ConnectableObservable spyConnectableObservable = PowerMockito.spy(Observable.just(cursor).publish());
 
         doReturn(Observable.just(dataPoints))
                 .when(spyConnectableObservable)
                 .compose((rx.Observable.Transformer<Cursor, List<DataPoint[]>>)any());
 
-        when(storIOContentResolver
-                .get()
-                .cursor()
-                .withQuery(any(Query.class))
-                .prepare()
-                .asRxObservable()
-                .observeOn(any(Scheduler.class))
-                .publish()
-        ).thenReturn(spyConnectableObservable);
+        when(mockStorIOContentResolver.get()).thenReturn(mockGetResult);
+        when(mockGetResult.cursor()).thenReturn(mockCursorResult);
+        when(mockCursorResult.withQuery(any(Query.class))).thenReturn(mockWithQueryResult);
+        when(mockWithQueryResult.prepare()).thenReturn(mockPrepareResult);
+        when(mockPrepareResult.asRxObservable()).thenReturn(mockObservable);
+        when(mockObservable.observeOn(any(Scheduler.class))).thenReturn(mockObservable2);
+        when(mockObservable2.publish()).thenReturn(spyConnectableObservable);
 
         habitActivityFragmentPresenter.loadHabitData(mock(Uri.class), 1f);
 
@@ -105,7 +121,6 @@ public class HabitActivityFragmentPresenterTest {
 
     @Test
     public void loadBestData() {
-
         Cursor cursor = mock(Cursor.class);
         when(cursor.moveToFirst()).thenReturn(true);
 
@@ -115,14 +130,12 @@ public class HabitActivityFragmentPresenterTest {
         when(cursor.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)).thenReturn(MOCK_BEST30);
         when(cursor.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST90)).thenReturn(MOCK_BEST90);
 
-        when(storIOContentResolver
-                        .get()
-                        .cursor()
-                        .withQuery(any(Query.class))
-                        .prepare()
-                        .asRxObservable()
-                .observeOn(any(Scheduler.class)))
-                .thenReturn(Observable.just(cursor));
+        when(mockStorIOContentResolver.get()).thenReturn(mockGetResult);
+        when(mockGetResult.cursor()).thenReturn(mockCursorResult);
+        when(mockCursorResult.withQuery(any(Query.class))).thenReturn(mockWithQueryResult);
+        when(mockWithQueryResult.prepare()).thenReturn(mockPrepareResult);
+        when(mockPrepareResult.asRxObservable()).thenReturn(mockObservable);
+        when(mockObservable.observeOn(any(Scheduler.class))).thenReturn(Observable.just(cursor));
 
         habitActivityFragmentPresenter.loadBestData(mock(Uri.class));
 

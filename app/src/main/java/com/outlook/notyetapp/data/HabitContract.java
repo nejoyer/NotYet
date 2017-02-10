@@ -219,11 +219,11 @@ public class HabitContract {
         }
 
         // convert the date (as long from DB) to a Java date object
-        public static Date convertDBDateToDate(long daysSinceJulianEraStart){
-            Time time = new Time();
-            time.setJulianDay((int)daysSinceJulianEraStart);
-            return new Date(time.toMillis(false));
-        }
+//        public static Date convertDBDateToDate(long daysSinceJulianEraStart){
+//            Time time = new Time();
+//            time.setJulianDay((int)daysSinceJulianEraStart);
+//            return new Date(time.toMillis(false));
+//        }
 
         public static long getHabitNumberFromUri(Uri uri)
         {

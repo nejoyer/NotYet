@@ -6,10 +6,6 @@ import android.widget.TextView;
 import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.utilities.library.TextValidator;
 
-/**
- * Created by Neil on 2/6/2017.
- */
-
 public class HabitValueValidator extends TextValidator {
 
     public HabitValueValidator(TextView textView, Context context) {
