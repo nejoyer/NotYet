@@ -2,6 +2,8 @@ package com.outlook.notyetapp.utilities;
 
 import java.text.DecimalFormat;
 
+// I very specifically want to display up to three numerical characters (plus a decimal if necessary)
+// for most of the tables in this app.
 public class CustomNumberFormatter {
     public static final DecimalFormat format100 = new DecimalFormat("###");
     public static final DecimalFormat format10 = new DecimalFormat("##.#");
@@ -10,7 +12,7 @@ public class CustomNumberFormatter {
 
     // Yes I know this is REALLY ugly. If you see a better way to do it, please, please let me know...
     // But do check that it gives the same results first... ".0" is ugly.
-    //This will truncate the numbers to 3 places. If they go very high or very low, this will not work. This is currently by design.
+    // This will truncate the numbers to 3 places. If they go very high or very low, this will not work. This is currently by design.
     public static String formatToThreeCharacters(float input)
     {
         String retVal = "";

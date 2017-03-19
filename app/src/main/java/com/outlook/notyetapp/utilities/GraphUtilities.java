@@ -1,53 +1,49 @@
 package com.outlook.notyetapp.utilities;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.widget.ListView;
 
-import com.jjoe64.graphview.series.Series;
-import com.outlook.notyetapp.R;
-import com.outlook.notyetapp.RollingAverageHelper;
-import com.outlook.notyetapp.data.HabitContract;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
+import com.outlook.notyetapp.R;
+import com.outlook.notyetapp.data.DateHelper;
 import com.outlook.notyetapp.factories.DataPointFactory;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import rx.Observable;
-import rx.functions.Func1;
 
 // Code shared between HabitActivity and GraphActivity relating to graph manipulation.
 public class GraphUtilities {
 
     public static final SimpleDateFormat DateFormat = new SimpleDateFormat("MMM d");
 
+    private static final int LINE_THICKNESS = 10;
+
     // Use this to generate series so that it can be mocked in UnitTests
     private LineGraphSeriesFactory lineGraphSeriesFactory;
     private DataPointFactory dataPointFactory;
+    private DateHelper dateHelper;
 
-    public GraphUtilities(LineGraphSeriesFactory lineGraphSeriesFactory, DataPointFactory dataPointFactory) {
+    public GraphUtilities(LineGraphSeriesFactory lineGraphSeriesFactory, DataPointFactory dataPointFactory, DateHelper dateHelper) {
         this.lineGraphSeriesFactory = lineGraphSeriesFactory;
         this.dataPointFactory = dataPointFactory;
+        this.dateHelper = dateHelper;
     }
 
-    public void ShowTodayLine(GraphView graphView, Date todayDate){
-        ShowHideTodayLine(graphView, todayDate, false);
+    public void ShowTodayLine(GraphView graphView){
+        ShowHideTodayLine(graphView, false);
     }
-    public void HideTodayLine(GraphView graphView, Date todayDate){
-        ShowHideTodayLine(graphView, todayDate, true);
+    public void HideTodayLine(GraphView graphView){
+        ShowHideTodayLine(graphView, true);
     }
 
-    private void ShowHideTodayLine(GraphView graphView, Date todayDate, boolean hideTodayLine){
+    // Show or hide the TodayLine on the graph.
+    private void ShowHideTodayLine(GraphView graphView, boolean hideTodayLine){
         LineGraphSeries<DataPoint> todaySeries = null;
         Context context = graphView.getContext();
         String todayLabel = context.getString(R.string.today_label);
@@ -65,6 +61,7 @@ public class GraphUtilities {
                 todaySeries = this.lineGraphSeriesFactory.getLineGraphSeries();
                 todaySeries.setTitle(todayLabel);
                 todaySeries.setColor(Color.BLACK);
+                todaySeries.setThickness(LINE_THICKNESS);
             }
         }
         else {
@@ -74,8 +71,12 @@ public class GraphUtilities {
             return;
         }
 
+        graphView.getViewport().calcCompleteRange();
+
         double minY = graphView.getViewport().getMinY(false);
         double maxY = graphView.getViewport().getMaxY(false);
+
+        Date todayDate = dateHelper.getTodaysDBDateAsDate();
 
         DataPoint[] todayPoints = new DataPoint[]{
                 dataPointFactory.getDataPoint(todayDate, minY),
@@ -85,9 +86,9 @@ public class GraphUtilities {
         graphView.addSeries(todaySeries);
     }
 
-    public void SetThickness(GraphView graphView, int i) {
+    public void SetThickness(GraphView graphView) {
         for(Series<DataPoint> series : graphView.getSeries()){
-            ((LineGraphSeries<DataPoint>)series).setThickness(i);
+            ((LineGraphSeries<DataPoint>)series).setThickness(LINE_THICKNESS);
         }
     }
 

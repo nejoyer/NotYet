@@ -13,6 +13,8 @@
     <!--Done Cancel Fragment-->
     <string name="done_label">Done</string>
     <string name="cancel_label">Cancel</string>
+    <string name="done_button_content_description">Checkmark for done</string>
+    <string name="cancel_button_content_description">X for cancel</string>
 
     <!--Activity Settings-->
     <string name="activity_title_label">Title</string>
@@ -20,12 +22,19 @@
     <string name="forecast_label">Forecast/Goal</string>
     <string name="one_swipe_label">Swipe Left Value</string>
     <string name="higher_is_better_label">Higher is better?</string>
+    <string name="higher_is_better_button_on_text">Higher Is Better</string>
+    <string name="higher_is_better_button_off_text">Lower Is Better</string>
     <string name="days_to_show_label">Days to show</string>
+    <string name="help_historical_image_description">Help button for Historical field</string>
+    <string name="help_forecast_image_description">Help button for Forecast/Goal field</string>
+    <string name="help_swipe_image_description">Help button for Swipe Left Value field</string>
+    <string name="help_higher_image_description">Help button for higher is better button</string>
+    <string name="help_days_image_description">Help button for days of the week buttons</string>
 
     <!--Help section-->
     <string name="help_activity_title">Help/How To</string>
     <string name="help_title">Help:</string>
-    <string name="help_historical">What do you think your daily average was in the past (before starting the app)?\n\nGuess low and you can make easy progress.</string>
+    <string name="help_historical">What do you think your daily average was in the past (before starting to use the app)?\n\nGuess low and you can make easy progress.</string>
     <string name="help_forecast">What is your daily goal?\n\nThis will be used to project in the future what your averages will look like if you keep it up.</string>
     <string name="help_swipe">From the main screen, you can swipe to the left. If you do, it will use this value for today and hide the activity for the rest of the day.</string>
     <string name="help_higher">Is higher better?\n\nEx. Pushups, you want to do more per day. Ex. Soda, you want to do fewer per day.</string>
@@ -46,15 +55,15 @@
     <string name="main_header_help_current">A7 is the average of the last 7 days including today.\nA30 is the average of the last 30 days including today.\nA90 is the average of the last 90 days including today.</string>
     <string name="main_header_help_best">B7 is the best A7 you have ever gotten.\nB30 is the best A30 you have ever gotten.\nB90 is the best A90 you have ever gotten.</string>
     <string name="no_activities_new_user_hero">Click here to start forming a new habit.</string>
-
+    <string name="main_header_help_content_description">help button</string>
 
     <!--Habit Activity-->
     <string name="habit_settings_submenu_title">Activity</string>
     <string name="action_habit_settings">Settings</string>
-    <string name="action_habit_delete">Delete...</string>
+    <string name="action_habit_delete">Delete&#8230;</string>
     <string name="add_more_history">Tap to add more history.</string>
     <string name="add_more_history_dialog_question">How many days to add?</string>
-    <string name="habit_data_update_title">Updating...</string>
+    <string name="habit_data_update_title">Updating&#8230;</string>
     <string name="best_label">Best</string>
     <string name="date_label">Date</string>
     <string name="val_column_label">Val</string>
@@ -66,6 +75,7 @@
     <string name="delete_habit_dialog_title">Delete Activity?</string>
     <string name="delete_habit_dialog_message">Do you really want to delete this activity and all associated data?</string>
     <string name="delete_habit_completed_toast">Activity deleted</string>
+    <string name="habit_list_item_checkmark_content_description">Checkmark to indicated the day is selected for multiple editing.</string>
 
     <!--Main Settings-->
     <string name="title_activity_settings">Settings</string>
@@ -75,6 +85,9 @@
     <string name="pref_day_change_key">day_change</string>
     <string name="pref_day_change_default">0</string>
 
+    <!--Sort Activity-->
+    <string name="list_item_drag_handle_content_description">Handle to drag for reordering activities.</string>
+
     <!--Text Validation-->
     <string name="cannot_be_empty">Cannot be empty</string>
     <string name="must_be_a_number">Must be a number</string>
@@ -83,25 +96,18 @@
     <string name="error_creating_activity_title">Error Creating Activity</string>
     <string name="error_creating_activity_message">Make sure you have a unique title for your activity and all fields are completed.</string>
 
-    <!--AdMob-->
-    <string name="admob_appid">***REMOVED***</string>
-    <string name="admob_main_activity_banner_unit_id">***REMOVED***</string>
-    <string name="admob_habit_activity_banner_unit_id">***REMOVED***</string>
-    <string name="admob_graph_activity_banner_unit_id">***REMOVED***</string>
-    <string name="admob_test_banner_unit_id">***REMOVED***</string>
-    
     <!--AboutActivity-->
     <string name="about_activity_title">About</string>
     <string name="about_about_header">@string/about_activity_title</string>
     <string name="about_text">This application was made mostly for myself to improve my habits based on a strategy that I think works best.
-        Failing once does not send you back to the beginning... you must get back up and continue to strive to improve. I hope it is useful for you too.</string>
+        Failing once does not send you back to the beginning&#8230; you must get back up and continue to strive to improve. I hope it is useful for you too.</string>
     <string name="about_email"> - <a href="mailto:NotYetApp@outlook.com">NotYetApp@outlook.com</a></string>
     <string name="about_attribution_header">Attributions</string>
     <string name="about_attributions">This application uses:\n
         &#8226;<a href="http://www.android-graphview.org/">http://www.android-graphview.org/</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.\n
-        &#8226;<a href="https://github.com/daimajia/AndroidSwipeLayout">https://github.com/daimajia/AndroidSwipeLayout</a>. Licensed under <a href="https://github.com/daimajia/AndroidSwipeLayout/blob/master/LICENSE">MIT Liscense</a>.\n
+        &#8226;<a href="https://github.com/daimajia/AndroidSwipeLayout">https://github.com/daimajia/AndroidSwipeLayout</a>. Licensed under <a href="https://github.com/daimajia/AndroidSwipeLayout/blob/master/LICENSE">MIT License</a>.\n
         &#8226;<a href="https://github.com/bauerca/drag-sort-listview">https://github.com/bauerca/drag-sort-listview</a>. Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.\n
-        &#8226;<a href="https://github.com/douglasjunior/android-simple-tooltip">https://github.com/douglasjunior/android-simple-tooltip</a>. Licensed under <a href="https://github.com/douglasjunior/android-simple-tooltip/blob/master/LICENSE">MIT Liscense</a>.\n
+        &#8226;<a href="https://github.com/douglasjunior/android-simple-tooltip">https://github.com/douglasjunior/android-simple-tooltip</a>. Licensed under <a href="https://github.com/douglasjunior/android-simple-tooltip/blob/master/LICENSE">MIT License</a>.\n
         &#8226;<a href="https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html">Android Asset Studio</a> was used to generate the icon. Licensed under the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported License</a>.\n
         &#8226;EULA based on a template provided by <a href="https://media.termsfeed.com/pdf/eula-template.pdf">termsfeed.com</a>.\n
     </string>

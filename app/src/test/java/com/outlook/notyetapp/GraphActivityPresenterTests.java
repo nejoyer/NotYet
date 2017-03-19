@@ -1,17 +1,13 @@
 package com.outlook.notyetapp;
 
-import android.net.Uri;
-
 import com.jjoe64.graphview.series.DataPoint;
+import com.outlook.notyetapp.data.StorIOContentResolverHelper;
 import com.outlook.notyetapp.library.TestException;
 import com.outlook.notyetapp.screen.graph.GraphActivityContract;
 import com.outlook.notyetapp.screen.graph.GraphActivityPresenter;
-import com.outlook.notyetapp.utilities.CursorToDataPointListHelper;
-import com.outlook.notyetapp.utilities.GraphUtilities;
-import com.pushtorefresh.storio.contentresolver.StorIOContentResolver;
+import com.outlook.notyetapp.utilities.rx.CursorToDataPointListHelper;
 import com.pushtorefresh.storio.contentresolver.operations.get.PreparedGet;
 import com.pushtorefresh.storio.contentresolver.operations.get.PreparedGetCursor;
-import com.pushtorefresh.storio.contentresolver.queries.Query;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,13 +26,14 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Scheduler;
+import rx.Single;
 import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.exceptions.OnErrorFailedException;
 import rx.schedulers.Schedulers;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,13 +51,11 @@ public class GraphActivityPresenterTests {
     @Mock
     CursorToDataPointListHelper cursorToDataPointListHelper;
 
+    @Mock
+    StorIOContentResolverHelper mockStorIOContentResolverHelper;
+
     //Mocked by PowerMock
-    StorIOContentResolver mockStorIOContentResolver;
-    PreparedGet.Builder mockGetResult;
-    PreparedGetCursor.Builder mockCursorResult;
-    PreparedGetCursor.CompleteBuilder mockWithQueryResult;
-    PreparedGetCursor mockPrepareResult;
-    Observable mockObservable;
+    Observable mockObservable, mockObservable2, mockObservable3;
 
     private GraphActivityPresenter graphActivityPresenter;
 
@@ -69,12 +64,9 @@ public class GraphActivityPresenterTests {
         MockitoAnnotations.initMocks(this);
 
         // Use PowerMock to create these mocks because some of them are "final" and mockito mocking doesn't work.
-        mockStorIOContentResolver = PowerMockito.mock(StorIOContentResolver.class);
-        mockGetResult = PowerMockito.mock(PreparedGet.Builder.class);
-        mockCursorResult = PowerMockito.mock(PreparedGetCursor.Builder.class);
-        mockWithQueryResult = PowerMockito.mock(PreparedGetCursor.CompleteBuilder.class);
-        mockPrepareResult = PowerMockito.mock(PreparedGetCursor.class);
         mockObservable = PowerMockito.mock(Observable.class);
+        mockObservable2 = PowerMockito.mock(Observable.class);
+        mockObservable3 = PowerMockito.mock(Observable.class);
 
         RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
             @Override
@@ -83,7 +75,7 @@ public class GraphActivityPresenterTests {
             }
         });
 
-        graphActivityPresenter = new GraphActivityPresenter(this.view, this.mockStorIOContentResolver, this.cursorToDataPointListHelper);
+        graphActivityPresenter = new GraphActivityPresenter(this.view, this.mockStorIOContentResolverHelper, this.cursorToDataPointListHelper);
     }
 
     @After
@@ -118,15 +110,12 @@ public class GraphActivityPresenterTests {
     public void loadHabitDataHappyPathTest(){
         List<DataPoint[]> dataPoints = Arrays.asList(new DataPoint[]{new DataPoint(5,5)}, new DataPoint[]{new DataPoint(6,6)});
 
-        //Powermock doesn't support "RETURNS_DEEP_STUBS" Answer, so need to mock the whole chain.
-        when(mockStorIOContentResolver.get()).thenReturn(mockGetResult);
-        when(mockGetResult.cursor()).thenReturn(mockCursorResult);
-        when(mockCursorResult.withQuery(any(Query.class))).thenReturn(mockWithQueryResult);
-        when(mockWithQueryResult.prepare()).thenReturn(mockPrepareResult);
-        when(mockPrepareResult.asRxObservable()).thenReturn(mockObservable);
-        when(mockObservable.compose(any(Observable.Transformer.class))).thenReturn(Observable.just(dataPoints));
+        when(mockStorIOContentResolverHelper.getCursorHabitDataOnMainThread(anyLong())).thenReturn(mockObservable);
+        when(mockObservable.first()).thenReturn(mockObservable2);
+        when(mockObservable2.compose(any(Observable.Transformer.class))).thenReturn(mockObservable3);
+        when(mockObservable3.toSingle()).thenReturn(Single.just(dataPoints));
 
-        graphActivityPresenter.loadHabitData(mock(Uri.class), 1);
+        graphActivityPresenter.loadHabitData(25L /*doesn't matter*/, 1);
         verify(view).renderHabitData(dataPoints);
     }
 
@@ -136,15 +125,12 @@ public class GraphActivityPresenterTests {
         //This is the error that wraps anything that gets thrown.
         exception.expect(OnErrorFailedException.class);
 
-        //Powermock doesn't support "RETURNS_DEEP_STUBS" Answer, so need to mock the whole chain.
-        when(mockStorIOContentResolver.get()).thenReturn(mockGetResult);
-        when(mockGetResult.cursor()).thenReturn(mockCursorResult);
-        when(mockCursorResult.withQuery(any(Query.class))).thenReturn(mockWithQueryResult);
-        when(mockWithQueryResult.prepare()).thenReturn(mockPrepareResult);
-        when(mockPrepareResult.asRxObservable()).thenReturn(mockObservable);
-        when(mockObservable.compose(any(Observable.Transformer.class))).thenReturn(Observable.error(new TestException()));
+        when(mockStorIOContentResolverHelper.getCursorHabitDataOnMainThread(anyLong())).thenReturn(mockObservable);
+        when(mockObservable.first()).thenReturn(mockObservable2);
+        when(mockObservable2.compose(any(Observable.Transformer.class))).thenReturn(mockObservable3);
+        when(mockObservable3.toSingle()).thenReturn(Single.error(new TestException()));
 
-        graphActivityPresenter.loadHabitData(mock(Uri.class), 1f);
+        graphActivityPresenter.loadHabitData(25L /*doesn't matter*/, 1f);
         verify(view, never()).renderHabitData(null);
     }
 }

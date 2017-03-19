@@ -1,12 +1,9 @@
 package com.outlook.notyetapp;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,37 +11,32 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.data.HabitContract.ActivitiesEntry;
+import com.outlook.notyetapp.data.HabitContractUriBuilder;
 import com.outlook.notyetapp.utilities.HabitValueValidator;
 import com.outlook.notyetapp.utilities.TitleValidator;
 import com.outlook.notyetapp.utilities.library.GroupValidator;
-import com.outlook.notyetapp.utilities.library.TextValidator;
 
+import javax.inject.Inject;
+
+// shows the settings for a habit.
+// Used by both the CreateActivity and the ActivitySettingsActivity
 public class ActivitySettingsFragment extends Fragment {
 
-    public static final String ARG_ACTIVITY_URI = "activityuri";
-    private Uri mActivityUri = null;
+    public static final String ARG_ACTIVITY_ID = "activityid";
+    private long mActivityId = -1;
     private View mFragmentView;
-    public final CompoundButton[] mDayButtons = new CompoundButton[7];
+    public CompoundButton[] mDayButtons = new CompoundButton[7];
     private static final String[] DAYS_OF_WEEK = new String[]{"S", "M", "T", "W", "T", "F", "S"};
     private static final int[] DAYS_OF_WEEK_FLAGS = new int[]{0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40};
 
-//    private TextValidator mTitleValidator;
-//    private boolean mTitleError = true;
-//    private TextValidator mHistoricalValidator;
-//    private boolean mHistoricalError = true;
-//    private TextValidator mForecastValidator;
-//    private boolean mForecastError = true;
-//    private TextValidator mSwipeValidator;
-//    private boolean mSwipeError = true;
-
     private GroupValidator groupValidator;
 
-
+    @Inject
+    public HabitContractUriBuilder habitContractUriBuilder;
 
     public ActivitySettingsFragment() {
         // Required empty public constructor
@@ -54,13 +46,13 @@ public class ActivitySettingsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param activityUri the id of the activity for which the settings are being modified.
+     * @param activityId the id of the activity for which the settings are being modified.
      * @return A new instance of fragment ActivitySettingsFragment.
      */
-    public static ActivitySettingsFragment newInstance(Uri activityUri) {
+    public static ActivitySettingsFragment newInstance(long activityId) {
         ActivitySettingsFragment fragment = new ActivitySettingsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_ACTIVITY_URI, activityUri);
+        args.putLong(ARG_ACTIVITY_ID, activityId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +61,7 @@ public class ActivitySettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mActivityUri = getArguments().getParcelable(ARG_ACTIVITY_URI);
+            mActivityId = getArguments().getLong(ARG_ACTIVITY_ID);
         }
     }
 
@@ -103,10 +95,10 @@ public class ActivitySettingsFragment extends Fragment {
             mDayButtons[i] = dayButton;
         }
 
-        if(mActivityUri != null)
+        if(mActivityId != -1)
         {
             Cursor activitySettingsCursor = getContext().getContentResolver().query(
-                    mActivityUri,//Uri
+                    habitContractUriBuilder.buildActivityUri(mActivityId),//Uri
                     HabitContract.ActivitySettingsQueryHelper.ACTIVITY_SETTINGS_PROJECTION,//projection
                     null,//selection
                     null,//selectionArgs
@@ -121,89 +113,31 @@ public class ActivitySettingsFragment extends Fragment {
         // Add validators to the EditText fields.
         EditText titleEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_title_edit);
         groupValidator.AddFieldToValidate(titleEdit, TitleValidator.class);
-//        mTitleValidator = new TextValidator(titleEdit) {
-//            @Override
-//            public void validate(TextView textView, String text) {
-//                if(text.length() < 1) {
-//                    textView.setError(getString(R.string.cannot_be_empty));
-//                    mTitleError = true;
-//                }
-//                else {
-//                    mTitleError = false;
-//                }
-//            }
-//        };
-//        titleEdit.addTextChangedListener(mTitleValidator);
 
         EditText historicalEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_historical_edit);
         groupValidator.AddFieldToValidate(historicalEdit, HabitValueValidator.class);
-//        mHistoricalValidator = new TextValidator(historicalEdit) {
-//            @Override
-//            public void validate(TextView textView, String text) {
-//                if(text.length() < 1) {
-//                    textView.setError(getString(R.string.cannot_be_empty));
-//                    mHistoricalError = true;
-//                }
-//                else {
-//                    mHistoricalError = false;
-//                }
-//            }
-//        };
-//        historicalEdit.addTextChangedListener(mHistoricalValidator);
 
         EditText forecastEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_forecast_edit);
         groupValidator.AddFieldToValidate(forecastEdit, HabitValueValidator.class);
-//        mForecastValidator = new TextValidator(forecastEdit) {
-//            @Override
-//            public void validate(TextView textView, String text) {
-//                if(text.length() < 1) {
-//                    textView.setError(getString(R.string.cannot_be_empty));
-//                    mForecastError = true;
-//                }
-//                else {
-//                    mForecastError = false;
-//                }
-//            }
-//        };
-//        forecastEdit.addTextChangedListener(mForecastValidator);
 
         EditText swipeEdit = (EditText)mFragmentView.findViewById(R.id.activity_settings_one_swipe_edit);
         groupValidator.AddFieldToValidate(swipeEdit, HabitValueValidator.class);
-//        mSwipeValidator = new TextValidator(swipeEdit) {
-//            @Override
-//            public void validate(TextView textView, String text) {
-//                if(text.length() < 1) {
-//                    textView.setError(getString(R.string.cannot_be_empty));
-//                    mSwipeError = true;
-//                }
-//                else {
-//                    mSwipeError = false;
-//                }
-//            }
-//        };
-//        swipeEdit.addTextChangedListener(mSwipeValidator);
 
         return mFragmentView;
     }
 
-    // Run all three validators and return if there are any errors.
+    // Run all validators and return true if there are no errors.
     public boolean validate(){
-//        mTitleValidator.afterTextChanged(null);
-//        mHistoricalValidator.afterTextChanged(null);
-//        mForecastValidator.afterTextChanged(null);
-//        mSwipeValidator.afterTextChanged(null);
-//        return mTitleError || mHistoricalError || mForecastError || mSwipeError;
         return groupValidator.ValidateAll();
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroyView() {
+        //Avoid leaks of the activity by dropping references that can contain pointers to the context
+        this.mFragmentView = null;
+        this.mDayButtons = null;
+        this.groupValidator = null;
+        super.onDestroyView();
     }
 
     //Get the settings the user has entered from the UI and get them in a state where it is easy to put into the DB.
@@ -238,22 +172,18 @@ public class ActivitySettingsFragment extends Fragment {
         EditText titleEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_title_edit));
         String title = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_ACTIVITY_TITLE);
         titleEditText.setText(title);
-//        mTitleError = false;
 
         EditText historicalEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_historical_edit));
         String historical = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_HISTORICAL);
         historicalEditText.setText(historical);
-//        mHistoricalError = false;
 
         EditText forecastEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_forecast_edit));
         String forecast = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_FORECAST);
         forecastEditText.setText(forecast);
-//        mForecastError = false;
 
         EditText swipeEditText = ((EditText)mFragmentView.findViewById(R.id.activity_settings_one_swipe_edit));
         String swipe = cursor.getString(HabitContract.ActivitySettingsQueryHelper.COLUMN_SWIPE_VALUE);
         swipeEditText.setText(swipe);
-//        mForecastError = false;
 
         ToggleButton higherIsBetterToggle = ((ToggleButton)mFragmentView.findViewById(R.id.activity_settings_higher_is_better_toggle));
         higherIsBetterToggle.setChecked(cursor.getInt(HabitContract.ActivitySettingsQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1);

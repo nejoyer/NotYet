@@ -13,8 +13,6 @@ import com.outlook.notyetapp.BuildConfig;
 import com.outlook.notyetapp.R;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
 
 /**
  * Defines table and column names for the habit database.
@@ -49,6 +47,8 @@ public class HabitContract {
     static final int HABITDATA_ENTRIES = 301;
     static final int ACTIVITY_HABITDATA_ENTRIES = 302;
 
+    // This is actually legacy and can be removed in the future.
+    // I moved to MVP with StorIO rather than the loaders I had originally
     public static final int ACTIVITES_TODAYS_STATS_LOADER = 0;
     public static final int HABITDATA_LOADER = 1;
     public static final int ACTIVITY_BEST_LOADER = 2;
@@ -101,7 +101,7 @@ public class HabitContract {
 
         // is this a habit where higher is better? ex. Pushups.
         // or where lower is better... ex. TV minutes
-        // boolean
+        // boolean (but stored in db as int)
         public static final String COLUMN_HIGHER_IS_BETTER = "higher_is_better";
 
         // which days to show the activity on the homepage
@@ -129,14 +129,8 @@ public class HabitContract {
         // long
         public static final String COLUMN_HIDE_DATE = "hide_date";
 
-        //todo need to check that is Uri is good for something
         public static Uri buildActivityUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
-        public static Uri buildActivityUriFromHabitDataEntryUri(Uri habitDataEntryUri) {
-            Long activityId = ActivitiesEntry.getActivityNumberFromUri(habitDataEntryUri);
-            return buildActivityUri(activityId);
         }
 
         public static long getActivityNumberFromUri(Uri uri)
@@ -205,7 +199,7 @@ public class HabitContract {
         {
             Time time = new Time();
             time.set(System.currentTimeMillis());
-            int julianDay = Time.getJulianDay(System.currentTimeMillis() - offset, time.gmtoff);//// TODO: 9/6/2016 time.gmtoff?
+            int julianDay = Time.getJulianDay(System.currentTimeMillis() - offset, time.gmtoff);
             return (long) julianDay;
         }
 
@@ -217,13 +211,6 @@ public class HabitContract {
             SimpleDateFormat dayFormat = new SimpleDateFormat(" M/d");
             return dayOfWeekFormat.format(time.toMillis(false)).substring(0,2) + dayFormat.format(time.toMillis(false));
         }
-
-        // convert the date (as long from DB) to a Java date object
-//        public static Date convertDBDateToDate(long daysSinceJulianEraStart){
-//            Time time = new Time();
-//            time.setJulianDay((int)daysSinceJulianEraStart);
-//            return new Date(time.toMillis(false));
-//        }
 
         public static long getHabitNumberFromUri(Uri uri)
         {
@@ -261,6 +248,7 @@ public class HabitContract {
                 ActivitiesEntry.TABLE_NAME + "." + ActivitiesEntry._ID,//This is required for CursorAdapter
                 ActivitiesEntry.COLUMN_ACTIVITY_TITLE,
                 ActivitiesEntry.COLUMN_FORECAST,
+                ActivitiesEntry.COLUMN_HISTORICAL,
                 ActivitiesEntry.COLUMN_SWIPE_VALUE,
                 ActivitiesEntry.COLUMN_HIGHER_IS_BETTER,
                 ActivitiesEntry.COLUMN_BEST7,
@@ -275,55 +263,46 @@ public class HabitContract {
         public static final int COLUMN_ACTIVITY_ID = 0;
         public static final int COLUMN_ACTIVITY_TITLE = 1;
         public static final int COLUMN_FORECAST = 2;
-        public static final int COLUMN_SWIPE_VALUE = 3;
-        public static final int COLUMN_HIGHER_IS_BETTER = 4;
-        public static final int COLUMN_BEST7 = 5;
-        public static final int COLUMN_BEST30 = 6;
-        public static final int COLUMN_BEST90 = 7;
-        public static final int COLUMN_ROLLING_AVG_7 = 8;
-        public static final int COLUMN_ROLLING_AVG_30 = 9;
-        public static final int COLUMN_ROLLING_AVG_90 = 10;
-        public static final int COLUMN_VALUE = 11;
+        public static final int COLUMN_HISTORICAL = 3;
+        public static final int COLUMN_SWIPE_VALUE = 4;
+        public static final int COLUMN_HIGHER_IS_BETTER = 5;
+        public static final int COLUMN_BEST7 = 6;
+        public static final int COLUMN_BEST30 = 7;
+        public static final int COLUMN_BEST90 = 8;
+        public static final int COLUMN_ROLLING_AVG_7 = 9;
+        public static final int COLUMN_ROLLING_AVG_30 = 10;
+        public static final int COLUMN_ROLLING_AVG_90 = 11;
+        public static final int COLUMN_VALUE = 12;
 
         public static Uri buildActivitiesStatsUri(){
             return HabitContract.ActivitiesEntry.CONTENT_URI.buildUpon().appendPath(PATH_STATS).build();
         }
     }
 
-    public static final class ActivityBestQueryHelper {
-        public static final int ACTIVITY_BEST_LOADER = HabitContract.ACTIVITY_BEST_LOADER;
-
-        public static final String[] ACTIVITY_BEST_PROJECTION = {
-                ActivitiesEntry.COLUMN_BEST7,
-                ActivitiesEntry.COLUMN_BEST30,
-                ActivitiesEntry.COLUMN_BEST90,
-                ActivitiesEntry.COLUMN_HIGHER_IS_BETTER,
-                ActivitiesEntry.COLUMN_ACTIVITY_TITLE
-        };
-
-        public static final int COLUMN_BEST7 = 0;
-        public static final int COLUMN_BEST30 = 1;
-        public static final int COLUMN_BEST90 = 2;
-        public static final int COLUMN_HIGHER_IS_BETTER = 3;
-        public static final int COLUMN_ACTIVITY_TITLE = 4;
-    }
-
     public static final class ActivitySettingsQueryHelper {
         public static final String[] ACTIVITY_SETTINGS_PROJECTION = {
+                ActivitiesEntry.COLUMN_ACTIVITY_ID,
                 ActivitiesEntry.COLUMN_ACTIVITY_TITLE,
                 ActivitiesEntry.COLUMN_HISTORICAL,
                 ActivitiesEntry.COLUMN_FORECAST,
                 ActivitiesEntry.COLUMN_SWIPE_VALUE,
                 ActivitiesEntry.COLUMN_HIGHER_IS_BETTER,
-                ActivitiesEntry.COLUMN_DAYS_TO_SHOW
+                ActivitiesEntry.COLUMN_DAYS_TO_SHOW,
+                ActivitiesEntry.COLUMN_BEST7,
+                ActivitiesEntry.COLUMN_BEST30,
+                ActivitiesEntry.COLUMN_BEST90
         };
 
-        public static final int COLUMN_ACTIVITY_TITLE = 0;
-        public static final int COLUMN_HISTORICAL = 1;
-        public static final int COLUMN_FORECAST = 2;
-        public static final int COLUMN_SWIPE_VALUE = 3;
-        public static final int COLUMN_HIGHER_IS_BETTER = 4;
-        public static final int COLUMN_DAYS_TO_SHOW = 5;
+        public static final int COLUMN_ACTIVITY_ID = 0;
+        public static final int COLUMN_ACTIVITY_TITLE = 1;
+        public static final int COLUMN_HISTORICAL = 2;
+        public static final int COLUMN_FORECAST = 3;
+        public static final int COLUMN_SWIPE_VALUE = 4;
+        public static final int COLUMN_HIGHER_IS_BETTER = 5;
+        public static final int COLUMN_DAYS_TO_SHOW = 6;
+        public static final int COLUMN_BEST7 = 7;
+        public static final int COLUMN_BEST30 = 8;
+        public static final int COLUMN_BEST90 = 9;
     }
 
     public static final class ActivitySortQueryHelper {
@@ -331,13 +310,11 @@ public class HabitContract {
 
         public static final String[] ACTIVITY_SORT_PROJECTION = {
                 ActivitiesEntry.COLUMN_ACTIVITY_ID,
-                ActivitiesEntry.COLUMN_ACTIVITY_TITLE,
-//                ActivitiesEntry.COLUMN_SORT_PRIORITY
+                ActivitiesEntry.COLUMN_ACTIVITY_TITLE
         };
 
         public static final int COLUMN_ACTIVITY_ID = 0;
         public static final int COLUMN_ACTIVITY_TITLE = 1;
-        public static final int COLUMN_SORT_PRIORITY = 2;
 
         public static Uri getActivitiesUri(){
             return ActivitiesEntry.CONTENT_URI;
@@ -361,20 +338,22 @@ public class HabitContract {
 
         public static final Uri RECENT_DATA_URI = ActivitiesEntry.CONTENT_URI.buildUpon().appendPath(PATH_RECENT).build();
 
-        public static String getHavingStatement(long offset)
+        public static String getHavingStatement(long date)
         {
-            return HabitDataEntry.COLUMN_DATE + " != " + HabitDataEntry.getTodaysDBDate(offset);
+            return HabitDataEntry.COLUMN_DATE + " != " + date;
         }
     }
 
     public static final class NormalizeActivityDataTaskQueryHelper {
         public static final String[] NORMALIZE_ACTIVITY_DATA_TASK_PROJECTION = {
-            HabitDataEntry.COLUMN_DATE,
-            HabitDataEntry.COLUMN_VALUE
+                HabitDataEntry._ID,
+                HabitDataEntry.COLUMN_DATE,
+                HabitDataEntry.COLUMN_VALUE
         };
 
-        public static final int COLUMN_DATE = 0;
-        public static final int COLUMN_VALUE = 1;
+        public static final int COLUMN_ID = 0;
+        public static final int COLUMN_DATE = 1;
+        public static final int COLUMN_VALUE = 2;
 
         public static final String SORT_ORDER_AND_LIMIT_90 = HabitDataEntry.COLUMN_DATE + " DESC LIMIT 90";
     }
@@ -404,10 +383,11 @@ public class HabitContract {
         public static final int COLUMN_ROLLING_AVG_90 = 5;
         public static final int COLUMN_TYPE = 6;
 
-        //EX. URI content://com.outlook.notyetapp/activities/#/habitdata
-        public static Uri buildHabitDataUriForActivity(long activityId){
-            return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_HABIT_DATA).build();
-        }
+        //// TODO: 3/16/2017
+//        //EX. URI content://com.outlook.notyetapp/activities/#/habitdata
+//        public static Uri buildHabitDataUriForActivity(long activityId){
+//            return ActivitiesEntry.buildActivityUri(activityId).buildUpon().appendPath(PATH_HABIT_DATA).build();
+//        }
     }
 
     public static final class HabitDataOldestQueryHelper {

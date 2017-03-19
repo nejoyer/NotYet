@@ -1,16 +1,16 @@
 package com.outlook.notyetapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 /**
- * A fragment containing a "Done" and "Cancel" button at the top.
+ * A fragment containing a "Done" and "Cancel" buttons to be used at the top of the screen.
  * Activities that contain this fragment must implement the
  * {@link DoneCancelFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.

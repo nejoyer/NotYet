@@ -3,6 +3,7 @@ package com.outlook.notyetapp.utilities;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+// Factory for creating LineGraphSeries. Created to make unit testing easier (possible).
 public class LineGraphSeriesFactory {
     public LineGraphSeries<DataPoint> getLineGraphSeries(){
         return new LineGraphSeries<DataPoint>();

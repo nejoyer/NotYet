@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.utilities.library.TextValidator;
 
+// Validator to ensure that the user has entered a valid value for a habit.
 public class HabitValueValidator extends TextValidator {
 
     public HabitValueValidator(TextView textView, Context context) {

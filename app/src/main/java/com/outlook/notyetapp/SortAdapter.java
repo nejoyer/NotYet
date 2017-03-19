@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.outlook.notyetapp.data.HabitContract;
 import com.mobeta.android.dslv.DragSortCursorAdapter;
+import com.outlook.notyetapp.data.HabitContract;
 
 // Handle laying out the SortActivity list items. Also includes functionality to save the order to the DB.
 public class SortAdapter extends DragSortCursorAdapter{

@@ -1,57 +1,55 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ActivitySettingsFragment">
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/activity_title_label"
+            android:textAppearance="@android:style/TextAppearance.Large"/>
+        <EditText
+            android:id="@+id/activity_settings_title_edit"
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="textCapWords"
+            android:hint="Ex. Pushups" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <TextView
                 android:padding="@dimen/main_activity_margin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/activity_title_label"
+                android:text="@string/historical_label"
                 android:textAppearance="@android:style/TextAppearance.Large"/>
-            <EditText
-                android:id="@+id/activity_settings_title_edit"
-                android:padding="@dimen/main_activity_margin"
+            <ImageView
+                android:id="@+id/help_historical"
+                android:contentDescription="@string/help_historical_image_description"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:inputType="textCapWords"
-                android:hint="Ex. Pushups" />
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:padding="@dimen/main_activity_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/historical_label"
-                    android:textAppearance="@android:style/TextAppearance.Large"/>
-                <ImageView
-                    android:id="@+id/help_historical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:padding="1dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerInside"
-                    android:tint="@color/colorPrimaryDark"
-                    android:src="@android:drawable/ic_dialog_info"/>
-            </LinearLayout>
-            <EditText
-                android:id="@+id/activity_settings_historical_edit"
-                android:padding="@dimen/main_activity_margin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:maxLines="1"
-                android:hint="Ex. 10" />
+                android:layout_height="match_parent"
+                android:padding="1dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:tint="@color/colorPrimaryDark"
+                android:src="@android:drawable/ic_dialog_info"/>
+        </LinearLayout>
+        <EditText
+            android:id="@+id/activity_settings_historical_edit"
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:hint="Ex. 10" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -64,6 +62,7 @@
                 android:textAppearance="@android:style/TextAppearance.Large"/>
             <ImageView
                 android:id="@+id/help_forecast"
+                android:contentDescription="@string/help_forecast_image_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
@@ -72,14 +71,14 @@
                 android:tint="@color/colorPrimaryDark"
                 android:src="@android:drawable/ic_dialog_info"/>
         </LinearLayout>
-            <EditText
-                android:id="@+id/activity_settings_forecast_edit"
-                android:padding="@dimen/main_activity_margin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:maxLines="1"
-                android:hint="Ex. 60" />
+        <EditText
+            android:id="@+id/activity_settings_forecast_edit"
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:hint="Ex. 60" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -92,6 +91,7 @@
                 android:textAppearance="@android:style/TextAppearance.Large"/>
             <ImageView
                 android:id="@+id/help_swipe"
+                android:contentDescription="@string/help_swipe_image_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
@@ -100,14 +100,14 @@
                 android:tint="@color/colorPrimaryDark"
                 android:src="@android:drawable/ic_dialog_info"/>
         </LinearLayout>
-            <EditText
-                android:id="@+id/activity_settings_one_swipe_edit"
-                android:padding="@dimen/main_activity_margin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:maxLines="1"
-                android:hint="Ex. 60" />
+        <EditText
+            android:id="@+id/activity_settings_one_swipe_edit"
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:hint="Ex. 60" />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -120,6 +120,7 @@
                 android:textAppearance="@android:style/TextAppearance.Large"/>
             <ImageView
                 android:id="@+id/help_higher"
+                android:contentDescription="@string/help_higher_image_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
@@ -128,14 +129,14 @@
                 android:tint="@color/colorPrimaryDark"
                 android:src="@android:drawable/ic_dialog_info"/>
         </LinearLayout>
-            <ToggleButton
-                android:id="@+id/activity_settings_higher_is_better_toggle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOn="Higher Is Better"
-                android:textOff="Lower Is Better"
-                android:checked="true"
-                />
+        <ToggleButton
+            android:id="@+id/activity_settings_higher_is_better_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="@string/higher_is_better_button_on_text"
+            android:textOff="@string/higher_is_better_button_off_text"
+            android:checked="true"
+            />
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -148,6 +149,7 @@
                 android:textAppearance="@android:style/TextAppearance.Large"/>
             <ImageView
                 android:id="@+id/help_days"
+                android:contentDescription="@string/help_days_image_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
@@ -156,14 +158,13 @@
                 android:tint="@color/colorPrimaryDark"
                 android:src="@android:drawable/ic_dialog_info"/>
         </LinearLayout>
-            <LinearLayout
-                android:id="@+id/activity_settings_days_to_show_holder"
-                android:padding="@dimen/main_activity_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!--Buttons added here programmatically-->
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/activity_settings_days_to_show_holder"
+            android:padding="@dimen/main_activity_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!--Buttons added here programmatically-->
         </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+    </LinearLayout>
+</ScrollView>

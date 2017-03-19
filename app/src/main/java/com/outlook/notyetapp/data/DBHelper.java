@@ -2,6 +2,7 @@ package com.outlook.notyetapp.data;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+// Used to manage creation, upgrade, and downgrade of the db.
+// Also has some utilities for preparing a demo
 public class DBHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
@@ -37,7 +40,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        // Create a table to hold Activities.
+
         final String SQL_CREATE_ACTIVITIES_TABLE = "CREATE TABLE " + ActivitiesEntry.TABLE_NAME + " (" +
                 ActivitiesEntry._ID + " INTEGER PRIMARY KEY," +
                 ActivitiesEntry.COLUMN_ACTIVITY_TITLE + " TEXT UNIQUE NOT NULL, " +
@@ -78,7 +81,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        // TODO
+        // TODO If I need to change the schema, so far I haven't needed to since release.
         // For now, until we have the schema more set, just drop and re-create.
         // In the future, we'll need an upgrade strategy.
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ActivitiesEntry.TABLE_NAME);
@@ -115,6 +118,57 @@ public class DBHelper extends SQLiteOpenHelper {
                 }
             }
         }
+    }
+
+    // I've included a demo db in the demo version (unreleased) version of this project. But the demo
+    // will get stale as no one is entering values. This gets called to rewrite all the dates in the demo
+    // db by increasing the date values until it looks as recent as the day it was created.
+    public void updateDemoDBByDate(){
+        Cursor cursor = null;
+        long maxDate = 0;
+        try {
+            cursor = mContext.getContentResolver().query(
+                    HabitContract.RecentDataQueryHelper.RECENT_DATA_URI,
+                    HabitContract.RecentDataQueryHelper.RECENT_DATA_PROJECTION,
+                    null, //selection
+                    null, //selectionArgs
+                    null //Sort order
+            );
+
+            while (cursor.moveToNext()) {
+                long activityMax = cursor.getLong(HabitContract.RecentDataQueryHelper.COLUMN_DATE);
+                if (activityMax > maxDate) {
+                    maxDate = activityMax;
+                }
+            }
+        }
+        finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+        //This is only used in test code, so DI not a goal.
+        DateHelper dateHelper = new DateHelper(new SharedPreferencesManager(mContext));
+        long todaysDBDate = dateHelper.getTodaysDBDate();
+
+        if(maxDate > 0 && todaysDBDate > maxDate) {
+            long amountToUpdate = todaysDBDate - maxDate;
+
+            // This is a fun trick, when we add the days to update, we invert the number to make it negative.
+            // This helps us avoid uniqueness constraints. If we don't do this, about half of the rows will be deleted.
+            getWritableDatabase().execSQL("UPDATE " + HabitContract.HabitDataEntry.TABLE_NAME
+                    + " SET " + HabitContract.HabitDataEntry.COLUMN_DATE + " = "
+                    + " - (" + HabitContract.HabitDataEntry.COLUMN_DATE + " + " + String.valueOf(amountToUpdate) + ")");
+            // Then we invert it back.
+            getWritableDatabase().execSQL("UPDATE " + HabitContract.HabitDataEntry.TABLE_NAME
+                    + " SET " + HabitContract.HabitDataEntry.COLUMN_DATE + " = "
+                    + " - " + HabitContract.HabitDataEntry.COLUMN_DATE);
+
+//            getWritableDatabase().execSQL("UPDATE " + HabitContract.ActivitiesEntry.TABLE_NAME
+//                    + " SET " + HabitContract.ActivitiesEntry.COLUMN_HIDE_DATE + " = "
+//                    + HabitContract.ActivitiesEntry.COLUMN_HIDE_DATE + " + " + String.valueOf(amountToUpdate));
+        }
+        mContext.getContentResolver().notifyChange(HabitContract.ActivitiesTodaysStatsQueryHelper.buildActivitiesStatsUri(), null);
     }
 
     private void copyFile(InputStream in, OutputStream out) throws IOException {

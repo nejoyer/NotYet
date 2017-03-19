@@ -1,9 +1,6 @@
 package com.outlook.notyetapp.utilities.library;
 
-/**
- * Created by Neil on 2/6/2017.
- */
-
+// reminder to presenters that they need to unsubscribe from any long-lived subscriptions they create
 public interface Presenter {
     void unsubscribe();
 }

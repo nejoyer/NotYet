@@ -1,12 +1,13 @@
 package com.outlook.notyetapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+// Show the help page
 public class HelpActivity extends AppCompatActivity {
     @BindView(R.id.help_activity_webview)
     WebView webView;

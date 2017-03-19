@@ -23,6 +23,7 @@
             android:gravity="center"/>
         <EditText
             android:id="@+id/multiselect_value_edittext"
+            android:inputType="numberDecimal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <LinearLayout
@@ -34,12 +35,12 @@
                 android:id="@+id/multiselect_cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@android:string/no"/>
+                android:text="@android:string/cancel"/>
             <Button
                 android:id="@+id/multiselect_ok_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@android:string/yes"/>
+                android:text="@android:string/ok"/>
         </LinearLayout>
 
     </LinearLayout>

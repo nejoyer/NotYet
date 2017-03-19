@@ -1,9 +1,6 @@
 package com.outlook.notyetapp.utilities;
 
-/**
- * Created by Neil on 12/11/2016.
- */
-
+// Constants for reporting events to FirebaseAnalytics
 public class AnalyticsConstants {
     public class EventNames {
         public static final String UPDATE_HABITS_IF_NECESSARY = "update_habits_if_necessary";

@@ -9,6 +9,7 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.Series;
 import com.outlook.notyetapp.R;
+import com.outlook.notyetapp.data.DateHelper;
 import com.outlook.notyetapp.factories.DataPointFactory;
 
 import org.hamcrest.Matcher;
@@ -58,6 +59,9 @@ public class GraphUtilitiesTest {
     LineGraphSeriesFactory mockLineGraphSeriesFactory;
 
     @Mock
+    DateHelper mockDateHelper;
+
+    @Mock
     GraphView mockGraphView;
 
     @Mock
@@ -75,7 +79,7 @@ public class GraphUtilitiesTest {
     public void setUp(){
         MockitoAnnotations.initMocks(this);
         dataPointFactory = new DataPointFactory();
-        graphUtilities = new GraphUtilities(mockLineGraphSeriesFactory, dataPointFactory);
+        graphUtilities = new GraphUtilities(mockLineGraphSeriesFactory, dataPointFactory, mockDateHelper);
     }
 
     @Test
@@ -99,7 +103,7 @@ public class GraphUtilitiesTest {
         when(mockGraphView.getContext()).thenReturn(mockContext);
         when(mockGraphView.getSeries()).thenReturn(serieses);
 
-        graphUtilities.HideTodayLine(mockGraphView, new Date(System.currentTimeMillis()));
+        graphUtilities.HideTodayLine(mockGraphView);
 
         verify(mockGraphView, times(1)).removeSeries(mockTodaySeries);
         verify(mockGraphView, never()).addSeries((Series)any());
@@ -125,7 +129,7 @@ public class GraphUtilitiesTest {
         when(mockGraphView.getContext()).thenReturn(mockContext);
         when(mockGraphView.getSeries()).thenReturn(serieses);
 
-        graphUtilities.HideTodayLine(mockGraphView, new Date(System.currentTimeMillis()));
+        graphUtilities.HideTodayLine(mockGraphView);
 
         verify(mockGraphView, never()).removeSeries((Series)any());
         verify(mockGraphView, never()).addSeries((Series)any());
@@ -167,7 +171,9 @@ public class GraphUtilitiesTest {
         when(mockGraphView.getContext()).thenReturn(mockContext);
         when(mockGraphView.getSeries()).thenReturn(serieses);
 
-        graphUtilities.ShowTodayLine(mockGraphView, todayDate);
+        when(mockDateHelper.getTodaysDBDateAsDate()).thenReturn(new Date());
+
+        graphUtilities.ShowTodayLine(mockGraphView);
 
         InOrder inOrder = inOrder(mockGraphView, mockTodaySeries);
         inOrder.verify(mockTodaySeries, times(1)).resetData(argThat(isDataPointArrayThatMatches(todayPoints)));
@@ -233,8 +239,6 @@ public class GraphUtilitiesTest {
         inOrder.verify(mockGraphView).addSeries(mockA7Series);
         inOrder.verify(mockGraphView).addSeries(mockA30Series);
         inOrder.verify(mockGraphView).addSeries(mockA90Series);
-
-        LineGraphSeries<DataPoint>[] expected = new LineGraphSeries[]{mockValSeries, mockA7Series, mockA30Series, mockA90Series};
 
         assertTrue(retval.containsKey(mockValSeries));
         assertEquals(retval.get(mockValSeries), dataPoints.get(0));

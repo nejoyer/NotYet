@@ -20,7 +20,7 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
-        android:text="Title"/>
+        tools:text="Title"/>
     <TextView
         android:id="@+id/error_message"
         android:layout_width="wrap_content"
@@ -28,6 +28,6 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
-        android:text="Message"/>
+        tools:text="Message"/>
     </LinearLayout>
 </RelativeLayout>

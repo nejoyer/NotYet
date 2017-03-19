@@ -20,6 +20,10 @@ import java.util.Date;
 // towards what they consider the current day.
 // For programming convenience the user's preference is stored as the number of milliseconds extra that they want
 // shift the day by.
+// Note: They can only shift the day backwards, not forwards, so a date like 11:00 pm,
+// will be like giving them a whole extra day to complete tasks and doesn't make any sense.
+// a normal value should be like 2am, 3am, or 5am.
+
 public class TimePreference extends DialogPreference {
     private int lastHour=0;
     private int lastMinute=0;

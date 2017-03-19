@@ -3,32 +3,27 @@ package com.outlook.notyetapp.screen.graph;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.outlook.notyetapp.CustomLegendRenderer;
-import com.outlook.notyetapp.R;
-import com.outlook.notyetapp.dagger.ContextModule;
-import com.outlook.notyetapp.dagger.DaggerGraphActivityComponent;
-import com.outlook.notyetapp.dagger.GraphActivityContractViewModule;
-import com.outlook.notyetapp.data.DateConverter;
-import com.outlook.notyetapp.data.HabitContract;
-import com.outlook.notyetapp.utilities.AnalyticsConstants;
-import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.pushtorefresh.storio.contentresolver.impl.DefaultStorIOContentResolver;
+import com.outlook.notyetapp.NotYetApplication;
+import com.outlook.notyetapp.R;
+import com.outlook.notyetapp.dagger.ActivityScoped.DaggerGraphActivityComponent;
+import com.outlook.notyetapp.dagger.ActivityScoped.GraphActivityModule;
+import com.outlook.notyetapp.data.DateHelper;
+import com.outlook.notyetapp.utilities.AnalyticsConstants;
+import com.outlook.notyetapp.utilities.GraphUtilities;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +36,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 // When you tap on the graph in the HabitActivity, you come to this full screen graph activity
-//public class GraphActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, GraphActivityContract.View{
 public class GraphActivity extends AppCompatActivity implements GraphActivityContract.View{
 
     public static final String ACTIVITY_ID_KEY = "activity_id";
@@ -74,7 +68,7 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
     public GraphActivityContract.ActionListener mPresenter;
 
     @Inject
-    public DateConverter mDateConverter;
+    public DateHelper mDateHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +90,15 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
         ButterKnife.bind(this);
 
         DaggerGraphActivityComponent.builder()
-                .graphActivityContractViewModule(new GraphActivityContractViewModule(this))
-                .contextModule(new ContextModule(this))
+                .notYetApplicationComponent(NotYetApplication.get(this).component())
+                .graphActivityModule(new GraphActivityModule(this))
                 .build().inject(this);
 
-        mPresenter.loadHabitData(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), mForecast);
+        mPresenter.loadHabitData(mActivityId, mForecast);
 
         setTitle(mActivityTitle);
 
-        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        firebaseAnalytics.logEvent(AnalyticsConstants.EventNames.GRAPH_ACTIVITY, new Bundle());
+        NotYetApplication.logFirebaseAnalyticsEvent(AnalyticsConstants.EventNames.GRAPH_ACTIVITY);
 
         mCustomLegendRenderer = new CustomLegendRenderer(mGraph);
         mGraph.setLegendRenderer(mCustomLegendRenderer);
@@ -147,28 +140,24 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
 
     @Override
     public void showTodayLine() {
-        mGraphUtilities.ShowTodayLine(mGraph, getTodayDate());
+        mGraphUtilities.ShowTodayLine(mGraph);
     }
 
     @Override
     public void hideTodayLine() {
-        mGraphUtilities.HideTodayLine(mGraph, getTodayDate());
+        mGraphUtilities.HideTodayLine(mGraph);
     }
 
     private void toggleSeries(CustomLegendRenderer.LegendMapping map)
     {
-        if(map.mSeries.getColor() == Color.TRANSPARENT) {
-            DataPoint[] data = hiddenSeries.remove(map.mSeries);
-            if(data != null) {
-                map.mSeries.resetData(data);
-            }
-            map.mSeries.setColor(map.mColor);
-            visibleSeries.put(map.mSeries, data);
-        } else {
+        if(map.mSeries.getColor() != Color.TRANSPARENT) {
+            // The series is currently visible, so store the real data in a dictionary
             DataPoint[] realData = visibleSeries.remove(map.mSeries);
             hiddenSeries.put(map.mSeries, realData);
 
             if(visibleSeries.size() > 0) {
+                // Get the data from one of the visible series and set that to be the data for all of the hidden series
+                // That will allow the Y Axis to zoom to show only the visible series (and not be stretched to accommodate data that is transparent)
                 Map.Entry<LineGraphSeries<DataPoint>, DataPoint[]> entry = visibleSeries.entrySet().iterator().next();
                 DataPoint[] fakeData = entry.getValue();
                 for(LineGraphSeries<DataPoint> series: hiddenSeries.keySet())
@@ -176,15 +165,26 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
                     series.resetData(fakeData);
                 }
             }
+            // Store the original color and then set the series to be transparent.
             map.mColor = map.mSeries.getColor();
             map.mSeries.setColor(Color.TRANSPARENT);
+        } else {
+            // Restore the original data and color to the series
+            DataPoint[] data = hiddenSeries.remove(map.mSeries);
+            if(data != null) {
+                map.mSeries.resetData(data);
+            }
+            map.mSeries.setColor(map.mColor);
+            visibleSeries.put(map.mSeries, data);
         }
 
+        // The today line shows only for the range of data of the visible series, so reset it since the visible series have changed.
         hideTodayLine();
         mGraph.invalidate();
         showTodayLine();
     }
 
+    // Save the user's zoom settings on rotation.
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putDouble(BUNDLE_MIN_X_KEY, mGraph.getViewport().getMinX(false));
@@ -203,8 +203,9 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
         super.onStop();
     }
 
+    // Render the data returned from the DB to the graph
     @Override
-    public void renderHabitData(List<DataPoint[]> data) {
+    public void renderHabitData(final List<DataPoint[]> data) {
 
         visibleSeries = mGraphUtilities.AddSeriesFromData(mGraph, data);
 
@@ -214,7 +215,7 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
             mMaxX = valDataPoints[valDataPoints.length - 90].getX();
         }
 
-        mGraphUtilities.SetThickness(mGraph, 10);
+        mGraphUtilities.SetThickness(mGraph);
 
         mGraph.getViewport().setMinX(mMinX);
         mGraph.getViewport().setMaxX(mMaxX);
@@ -238,16 +239,6 @@ public class GraphActivity extends AppCompatActivity implements GraphActivityCon
         mGraph.getLegendRenderer().setBackgroundColor(Color.WHITE);
         mGraph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
         mGraph.getLegendRenderer().setVisible(true);
-
-        mGraphUtilities.ShowTodayLine(mGraph, getTodayDate());
-    }
-
-    private Date getTodayDate() {
-        if(todayDate == null) {
-            long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(mGraph.getContext()).getString(mGraph.getContext().getString(R.string.pref_day_change_key), "0"));
-            todayDate = mDateConverter.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
-        }
-
-        return todayDate;
+        mGraphUtilities.ShowTodayLine(mGraph);
     }
 }

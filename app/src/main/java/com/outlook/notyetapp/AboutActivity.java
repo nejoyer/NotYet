@@ -1,7 +1,7 @@
 package com.outlook.notyetapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 

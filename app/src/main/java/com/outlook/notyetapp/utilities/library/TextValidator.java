@@ -3,7 +3,6 @@ package com.outlook.notyetapp.utilities.library;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.TextView;
 
 // helper class so that you can easily validate text without implementing all three fields.
@@ -16,6 +15,8 @@ public abstract class TextValidator implements TextWatcher {
         this.context = context;
     }
 
+    // User will override this...
+    // they just need to provide a method that checks if the specified text is valid. Simple.
     public abstract boolean validate(String currentText);
 
     public final boolean validate(){

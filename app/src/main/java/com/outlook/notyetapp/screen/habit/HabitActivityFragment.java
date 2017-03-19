@@ -1,13 +1,13 @@
 package com.outlook.notyetapp.screen.habit;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -27,31 +27,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.outlook.notyetapp.ActivitySettingsActivity;
-import com.outlook.notyetapp.MainActivity;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.outlook.notyetapp.ActivitySettingsFragment;
+import com.outlook.notyetapp.NotYetApplication;
 import com.outlook.notyetapp.R;
-import com.outlook.notyetapp.UpdateHabitDataTask;
-
-import com.outlook.notyetapp.dagger.ContextModule;
-import com.outlook.notyetapp.dagger.DaggerHabitActivityFragmentComponent;
-import com.outlook.notyetapp.dagger.HabitActivityFragmentContractViewModule;
-import com.outlook.notyetapp.data.DateConverter;
+import com.outlook.notyetapp.dagger.ActivityScoped.DaggerHabitActivityFragmentComponent;
+import com.outlook.notyetapp.dagger.ActivityScoped.HabitActivityFragmentModule;
+import com.outlook.notyetapp.data.DateHelper;
 import com.outlook.notyetapp.data.HabitContract;
+import com.outlook.notyetapp.screen.activitysettings.ActivitySettingsActivity;
 import com.outlook.notyetapp.screen.graph.GraphActivity;
+import com.outlook.notyetapp.screen.main.MainActivity;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.CustomNumberFormatter;
 import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.outlook.notyetapp.utilities.HabitValueValidator;
 import com.outlook.notyetapp.utilities.library.GroupValidator;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -60,40 +55,43 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
+// Used in both MainActivity and HabitActivity
+// functionality to show graph and list view of data for a specific habit.
+// update the data by clicking one item or swiping right on multiple to multiselect
 public class HabitActivityFragment extends Fragment implements HabitActivityFragmentContract.View{
 
     public static final String ACTIVITY_ID_KEY = "activity_id";
-    public static final String ACTIVITY_FORECAST_KEY = "activity_forecast";
-    public static final String ACTIVITY_HIGHER_IS_BETTER_KEY = "higher_is_better_key";
     public static final String IS_TWO_PANE = "is_two_pane";
+    public static final String LIST_VIEW_STATE = "list_view_state";
+    public static final String FOOTER_LABEL = "footer_label";
 
     public long mActivityId = -99;
     public float mForecast;
-    public boolean mHigherIsBetter;
     public boolean mIsTwoPane;
     public String mActivityTitle;
 
-    private Date todayDate = null;
-
-    @BindView(R.id.habit_listview)
     ListView mHabitDataListView;
 
+    private Parcelable listViewState;
+
     private HabitDataAdapter mHabitDataAdapter;
+    private GroupValidator groupValidator;
+    public ProgressDialog mProgressDialog;
 
     @BindView(R.id.footer_best_7)
     TextView mFooterBest7;
+
     @BindView(R.id.footer_best_30)
     TextView mFooterBest30;
+
     @BindView(R.id.footer_best_90)
     TextView mFooterBest90;
 
     @BindView(R.id.multiselect_value_dialog)
     LinearLayout mMultiselectDialog = null;
+
     @BindView(R.id.multiselect_value_edittext)
     EditText mMultiSelectDialogValueField = null;
-
-    private GroupValidator groupValidator;
 
     @BindView(R.id.habit_graph)
     GraphView mGraph = null;
@@ -105,20 +103,17 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     GraphUtilities mGraphUtilities;
 
     @Inject
-    public DateConverter mDateConverter;
-
+    public DateHelper mDateHelper;
 
     // Use newInstance instead of this if possible to avoid missing a param
     public HabitActivityFragment() {
         // Required empty public constructor
     }
 
-    public static HabitActivityFragment newInstance(long activityId, float forecastVal, boolean higherIsBetter, boolean isTwoPane) {
+    public static HabitActivityFragment newInstance(long activityId, boolean isTwoPane) {
         HabitActivityFragment fragment = new HabitActivityFragment();
         Bundle args = new Bundle();
         args.putLong(ACTIVITY_ID_KEY, activityId);
-        args.putFloat(ACTIVITY_FORECAST_KEY, forecastVal);
-        args.putBoolean(ACTIVITY_HIGHER_IS_BETTER_KEY, higherIsBetter);
         args.putBoolean(IS_TWO_PANE, isTwoPane);
         fragment.setArguments(args);
         return fragment;
@@ -136,8 +131,6 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
         if (getArguments() != null) {
             mActivityId = getArguments().getLong(ACTIVITY_ID_KEY);
-            mForecast = getArguments().getFloat(ACTIVITY_FORECAST_KEY);
-            mHigherIsBetter = getArguments().getBoolean(ACTIVITY_HIGHER_IS_BETTER_KEY);
             mIsTwoPane = getArguments().getBoolean(IS_TWO_PANE);
         }
         setHasOptionsMenu(true);
@@ -148,12 +141,11 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_habit_activity, container, false);
-
+        LinearLayout footer = (LinearLayout)inflater.inflate(R.layout.habitdata_footer_add_more_history, mHabitDataListView, false);
+        //Can't add the footer in the xml, so need to do *some* binding manually (lots done with ButterKnife).
+        mHabitDataListView = (ListView)fragmentView.findViewById(R.id.habit_listview);
+        mHabitDataListView.addFooterView(footer, FOOTER_LABEL, true);
         ButterKnife.bind(this, fragmentView);
-
-        LinearLayout footer = (LinearLayout)inflater.inflate(R.layout.habitdata_footer_add_more_history, null);
-        footer.setOnClickListener(mFooterClickListener);
-        mHabitDataListView.addFooterView(footer);
 
         groupValidator = new GroupValidator(getContext());
 
@@ -162,23 +154,20 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
         mHabitDataAdapter = new HabitDataAdapter(getContext(), null, 0);
 
+        //Do this manually because we want to be able to remove the click listener when the user is doing multiselect
         mHabitDataListView.setOnItemClickListener(mItemClickListener);
 
-
         DaggerHabitActivityFragmentComponent.builder()
-                .habitActivityFragmentContractViewModule(new HabitActivityFragmentContractViewModule(this))
-                .contextModule(new ContextModule(getContext()))
+                .notYetApplicationComponent(NotYetApplication.get(this.getActivity()).component())
+                .habitActivityFragmentModule(new HabitActivityFragmentModule(this))
                 .build().inject(this);
-
-        mPresenter.loadHabitData(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), mForecast);
-        mPresenter.loadBestData(HabitContract.ActivitiesEntry.buildActivityUri(mActivityId));
 
         mHabitDataAdapter.setChecksChangedListener(mPresenter);
         mHabitDataListView.setAdapter(mHabitDataAdapter);
 
-
-//        getActivity().getSupportLoaderManager().restartLoader(HabitContract.HabitDataQueryHelper.HABITDATA_LOADER, null, this);
-//        getActivity().getSupportLoaderManager().restartLoader(HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER, null, this);
+        if(savedInstanceState != null) {
+            listViewState = savedInstanceState.getParcelable(LIST_VIEW_STATE);
+        }
 
         return fragmentView;
     }
@@ -189,13 +178,13 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    // not MVP right now. Low pri for unit testing.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_habit_settings:
-                Uri activityUri = HabitContract.ActivitiesEntry.buildActivityUri(mActivityId);
                 Intent settingsIntent = new Intent(getActivity(), ActivitySettingsActivity.class);
-                settingsIntent.setData(activityUri);
+                settingsIntent.putExtra(ActivitySettingsFragment.ARG_ACTIVITY_ID, mActivityId);
                 startActivity(settingsIntent);
                 return true;
             case R.id.action_habit_delete:
@@ -210,11 +199,13 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP |
                                         Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                                mPresenter.unsubscribe();
+
                                 getActivity().getContentResolver().delete(
                                         HabitContract.ActivitiesEntry.buildActivityUri(mActivityId), null, null);
 
-                                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
-                                mFirebaseAnalytics.logEvent(AnalyticsConstants.EventNames.HABIT_DELETED, new Bundle());
+                                NotYetApplication.logFirebaseAnalyticsEvent(AnalyticsConstants.EventNames.HABIT_DELETED);
 
                                 startActivity(mainActivityIntent);
                                 Toast.makeText(getActivity(), getString(R.string.delete_habit_completed_toast), Toast.LENGTH_LONG).show();
@@ -226,61 +217,42 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         }
     }
 
+
+
     // Footer to add a longer history (if the user has been keeping track of data before beginning to use the app).
-    private  View.OnClickListener mFooterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle(getString(R.string.add_more_history_dialog_question));
-            final EditText input = new EditText(getActivity());
-            input.setInputType(InputType.TYPE_CLASS_NUMBER);
-            alertDialogBuilder.setView(input);
-            alertDialogBuilder.setIcon(R.drawable.ic_menu_done_holo_light);
-            alertDialogBuilder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+    @OnClick(R.id.add_more_history_layout)
+    public void addMoreHistoryFooterClicked() {
+        mPresenter.addMoreHistoryClicked();
+    }
 
-                }
-            });
-            alertDialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Cursor oldestData = getActivity().getContentResolver().query(HabitContract.HabitDataOldestQueryHelper.buildHabitDataUriForActivity(mActivityId),
-                            HabitContract.HabitDataOldestQueryHelper.HABITDATA_OLDEST_PROJECTION,
-                            null, //selection handled by URI
-                            null, //selection args handled by URI
-                            HabitContract.HabitDataOldestQueryHelper.SORT_BY_DATE_ASC_LIMIT_1);
-                    oldestData.moveToFirst();
+    @Override
+    public void showAddMoreHistoryDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle(getString(R.string.add_more_history_dialog_question));
 
-                    long oldestDate = oldestData.getLong(HabitContract.HabitDataOldestQueryHelper.COLUMN_DATE);
+        final EditText input = new EditText(getActivity());
+        input.setId(R.id.add_more_history_edit_text);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-                    Cursor activityData = getActivity().getContentResolver().query(HabitContract.ActivitiesEntry.buildActivityUri(mActivityId),
-                            HabitContract.ActivitySettingsQueryHelper.ACTIVITY_SETTINGS_PROJECTION,
-                            null, //selection taken care of by URI
-                            null, //selectionArgs taken care of by URI
-                            null);//sort order
-                    activityData.moveToFirst();
+        alertDialogBuilder.setView(input);
+        alertDialogBuilder.setIcon(R.drawable.ic_menu_done_holo_light);
+        alertDialogBuilder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
 
-                    float historicalVal = activityData.getFloat(HabitContract.ActivitySettingsQueryHelper.COLUMN_HISTORICAL);
+            }
+        });
+        alertDialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int numberOfDaysToAdd = Integer.parseInt(input.getText().toString());
+                mPresenter.addMoreHistoryDialogOKClicked(mActivityId, numberOfDaysToAdd);
+            }
+        });
+        alertDialogBuilder.show();
+    }
 
-                    int numberOfDaysToAdd = Integer.parseInt(input.getText().toString());
-                    ArrayList<Long> datesToAdd = new ArrayList<Long>(numberOfDaysToAdd);
 
-                    for(Long date = oldestDate - numberOfDaysToAdd; date < oldestDate; date++) {
-                        datesToAdd.add(date);
-                    }
-
-                    HabitDataDatesUpdated(getActivity(),
-                            mActivityId,
-                            mHigherIsBetter,
-                            datesToAdd,
-                            historicalVal,
-                            HabitContract.HabitDataEntry.HabitValueType.HISTORICAL);
-                }
-            });
-            final AlertDialog alertDialog = alertDialogBuilder.show();
-        }
-    };
 
     // Clicking a HabitData point allows the user to change the value for that day using a popup.
     private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -293,6 +265,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             alertDialogBuilder.setMessage(getString(R.string.new_value_label));
 
             final EditText input = new EditText(getActivity());
+            input.setId(R.id.update_habit_value_edit_text);
             input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -317,12 +290,7 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             alertDialogBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    HabitDataDateUpdated(getActivity(),
-                            mActivityId,
-                            mHigherIsBetter,
-                            selectedDate,
-                            Float.parseFloat(input.getText().toString()),
-                            HabitContract.HabitDataEntry.HabitValueType.USER);
+                    mPresenter.updateHabitDataClicked(mActivityId, selectedDate, Float.parseFloat(input.getText().toString()));
 
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
@@ -346,76 +314,24 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         }
     };
 
-    // for when updating only one date
-    public void HabitDataDateUpdated(Context context,
-                                     long activityId,
-                                     boolean higherIsBetter,
-                                     long dateToUpdate,
-                                     float newValue,
-                                     HabitContract.HabitDataEntry.HabitValueType type){
-        ArrayList<Long> arrayList = new ArrayList<Long>(1);
-        arrayList.add(dateToUpdate);
-
-        HabitDataDatesUpdated(context, activityId, higherIsBetter, arrayList, newValue, type);
+    @Override
+    public void hideUpdatingDialog() {
+        if(this.mProgressDialog != null){
+            this.mProgressDialog.dismiss();
+        }
     }
 
-    public void HabitDataDatesUpdated(Context context,
-                                      long activityId,
-                                      boolean higherIsBetter,
-                                      ArrayList<Long> datesToUpdate,
-                                      float newValue,
-                                      HabitContract.HabitDataEntry.HabitValueType type){
-        Collections.sort(datesToUpdate, new Comparator<Long>() {
-            @Override
-            public int compare(Long long1, Long long2) {
-                return (int)(long1 - long2);
-            }
-        });
-
-        //only show the dialog if we are changing a date more than 30 days old. That is when the most work needs to be done.
-        // otherwise, the process should be so quick that the progress dialog only has an instant to show and is more distracting.
-        boolean showDialog = HabitContract.HabitDataEntry.getTodaysDBDate(0 /*offset doesn't matter for this*/) -  datesToUpdate.get(0) > 30;
-
-        new UpdateHabitDataTask(getActivity(), showDialog).execute(
-                new UpdateHabitDataTask.Params(
-                        context,
-                        activityId,
-                        higherIsBetter,
-                        datesToUpdate,
-                        newValue,
-                        type
-                )
-        );
+    @Override
+    public void showUpdatingDialog() {
+        mProgressDialog = ProgressDialog.show(getActivity(), getContext().getString(R.string.habit_data_update_title), null);
     }
-
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        if(mActivityId != -99) {
-//            switch (id) {
-//                case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
-//                    return new CursorLoader(getActivity(),//context
-//                            HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId),//Uri
-//                            HabitContract.HabitDataQueryHelper.HABITDATA_PROJECTION,//Projection
-//                            null,//Selection
-//                            null,//SelectionArgs
-//                            HabitContract.HabitDataQueryHelper.SORT_BY_DATE_DESC);//sortOrder
-//                case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
-//                    return new CursorLoader(getActivity(),
-//                            HabitContract.ActivitiesEntry.buildActivityUri(mActivityId),
-//                            HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_PROJECTION,
-//                            null,
-//                            null,
-//                            null);
-//                default:
-//                    throw new IllegalArgumentException("Invalid id");
-//            }
-//        }
-//        return null;
-//    }
 
     @Override
     public void renderHabitDataToList(Cursor data) {
         mHabitDataAdapter.swapCursor(data);
+        if(listViewState != null) {
+            mHabitDataListView.onRestoreInstanceState(listViewState);
+        }
     }
 
     @Override
@@ -424,8 +340,9 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             mGraphUtilities.AddSeriesFromData(mGraph, data);
 
             DataPoint[] valDataPoints = data.get(0);
-            double minX = valDataPoints[valDataPoints.length - 180].getX();
-            double maxX = valDataPoints[valDataPoints.length - 90].getX();
+            //By default display the last 90 days of data in the graph. (so 1-90 back from the length)
+            double minX = valDataPoints[valDataPoints.length - 90].getX();
+            double maxX = valDataPoints[valDataPoints.length - 1].getX();
 
             mGraph.getViewport().setMinX(minX);
             mGraph.getViewport().setMaxX(maxX);
@@ -437,77 +354,20 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
             mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
             mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
             mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-            mGraphUtilities.ShowTodayLine(mGraph, getTodayDate());
+            mGraphUtilities.ShowTodayLine(mGraph);
         }
     }
 
     @Override
-    public void renderBestData(String activityTitle, Boolean higherIsBetter, float best7, float best30, float best90) {
+    public void renderBestData(String activityTitle, float best7, float best30, float best90) {
         mActivityTitle = activityTitle;
         if(!mIsTwoPane) {
             getActivity().setTitle(activityTitle);
         }
-        mHigherIsBetter = higherIsBetter;
         mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(best7));
         mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(best30));
         mFooterBest90.setText(CustomNumberFormatter.formatToThreeCharacters(best90));
     }
-
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        switch (loader.getId())
-//        {
-//            case HabitContract.ActivityBestQueryHelper.ACTIVITY_BEST_LOADER:
-////                updateBestData(data);
-//                break;
-//            case HabitContract.HabitDataQueryHelper.HABITDATA_LOADER:
-////                mHabitDataAdapter.swapCursor(data);
-////                if(data.getCount() > 0) {
-////                    GraphUtilities gu = new GraphUtilities();
-////                    List<DataPoint[]> dataPoints = gu.UpdateSeriesData(data, mForecast, mValuesDataSeries, mAvg7DataSeries, mAvg30DataSeries, mAvg90DataSeries);
-////                    DataPoint[] valDataPoints = dataPoints.get(0);
-////                    gu.AddSeriesAndConfigureXScale(valDataPoints[valDataPoints.length - 180].getX(),
-////                            valDataPoints[valDataPoints.length - 90].getX(),
-////                            mGraph,
-////                            mValuesDataSeries,
-////                            mAvg7DataSeries,
-////                            mAvg30DataSeries,
-////                            mAvg90DataSeries,
-////                            mTodaySeries);
-////                    mGraph.getViewport().setScrollable(false);
-////                    mGraph.getViewport().setScalable(false);
-////                    mGraph.getViewport().setXAxisBoundsManual(true);
-////                    mGraph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(mGraph.getContext(), GraphUtilities.DateFormat));
-////                    mGraph.getGridLabelRenderer().setVerticalLabelsAlign(Paint.Align.LEFT);
-////                    mGraph.getGridLabelRenderer().setHorizontalLabelsAngle(135);
-////                    mGraph.getGridLabelRenderer().setNumHorizontalLabels(7);
-////                    mGraph.getGridLabelRenderer().setNumVerticalLabels(5);
-////                    gu.AddTodayLine(mGraph, mTodaySeries);
-////                }
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Invalid id");
-//        }
-//    }
-
-//    private void updateBestData(Cursor data){
-//        if(data.moveToFirst()) {
-//            mActivityTitle = data.getString(HabitContract.ActivityBestQueryHelper.COLUMN_ACTIVITY_TITLE);
-//            if(!mIsTwoPane) {
-//                getActivity().setTitle(mActivityTitle);
-//            }
-//            mHigherIsBetter = data.getInt(HabitContract.ActivityBestQueryHelper.COLUMN_HIGHER_IS_BETTER) == 1;
-//            mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST7)));
-//            mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST30)));
-//            mFooterBest90.setText(CustomNumberFormatter.formatToThreeCharacters(data.getFloat(HabitContract.ActivityBestQueryHelper.COLUMN_BEST90)));
-//        }
-//    }
-
-
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//        mHabitDataAdapter.swapCursor(null);
-//    }
 
     @Override
     public void showGraph() {
@@ -529,29 +389,38 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     }
 
     @OnClick(R.id.multiselect_cancel_button)
-    public void MultiSelectCancelClicked(View view) {
+    public void MultiSelectCancelClicked() {
         mHabitDataAdapter.ClearCheckmarks();
-        //force re-render... there might be a more efficient way to do this? But this is fast enough.
-        getContext().getContentResolver().notifyChange(HabitContract.HabitDataQueryHelper.buildHabitDataUriForActivity(mActivityId), null);
+        mPresenter.multiSelectCancelClicked(mActivityId);
+
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mGraph.getWindowToken(), 0);
     }
+
     @OnClick(R.id.multiselect_ok_button)
-    public void MultiSelectOKClicked(View view) {
+    public void MultiSelectOKClicked() {
         if(groupValidator.ValidateAll()) {
             ArrayList<Long> selectedDates = (ArrayList<Long>) mHabitDataAdapter.GetSelectedDates().clone();
             mHabitDataAdapter.ClearCheckmarks();
             EditText field = (EditText) mMultiselectDialog.findViewById(R.id.multiselect_value_edittext);
             float newValue = Float.parseFloat(field.getText().toString());
-            HabitDataDatesUpdated(getActivity(), mActivityId, mHigherIsBetter, selectedDates, newValue, HabitContract.HabitDataEntry.HabitValueType.USER);
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mGraph.getWindowToken(), 0);
+            mPresenter.updateHabitDataClicked(mActivityId, selectedDates, newValue);
         }
+    }
+
+    // The graph activity needs the forecast to let you pan right past today's date
+    // we are already querying activity settings, so we store the forecast in case the user clicks the graph
+    // this also keeps the forecast correct if the user updates it via settings
+    @Override
+    public void currentForecastData(float forecast) {
+        mForecast = forecast;
     }
 
     // If the user clicks on the graph, go to a full screen graph view.
     @OnClick(R.id.habit_graph)
-    public void graphClicked(View v) {
+    public void graphClicked() {
         Intent intent = new Intent(getActivity(), GraphActivity.class);
         intent.putExtra(GraphActivity.ACTIVITY_FORECAST_KEY, mForecast);
         intent.putExtra(GraphActivity.ACTIVITY_ID_KEY, mActivityId);
@@ -566,12 +435,15 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
         super.onStop();
     }
 
-    private Date getTodayDate() {
-        if(todayDate == null) {
-            long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(mGraph.getContext()).getString(mGraph.getContext().getString(R.string.pref_day_change_key), "0"));
-            todayDate = mDateConverter.convertDBDateToDate(HabitContract.HabitDataEntry.getTodaysDBDate(offset));
-        }
+    @Override
+    public void onResume() {
+        mPresenter.subscribeToHabitDataAndBestData(mActivityId);
+        super.onResume();
+    }
 
-        return todayDate;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(LIST_VIEW_STATE, mHabitDataListView.onSaveInstanceState());
+        super.onSaveInstanceState(outState);
     }
 }

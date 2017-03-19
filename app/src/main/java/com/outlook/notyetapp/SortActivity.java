@@ -1,16 +1,17 @@
 package com.outlook.notyetapp;
 
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
-import com.outlook.notyetapp.data.HabitContract;
 import com.mobeta.android.dslv.DragSortListView;
+import com.outlook.notyetapp.data.HabitContract;
 
-// This activity allows the user to drag the activities around to specify a preferred order. (ex. "eat breakfast" comes before "tuck in kids")
+// This activity allows the user to drag the activities around to specify a preferred order.
+// (ex. "eat breakfast" comes before "tuck in the kids")
 public class SortActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, DoneCancelFragment.OnFragmentInteractionListener{
 
     public SortAdapter mSortAdapter = null;
@@ -29,6 +30,8 @@ public class SortActivity extends AppCompatActivity implements LoaderManager.Loa
         DragSortListView listView = (DragSortListView)findViewById(R.id.sort_activity_DSLV);
         listView.setAdapter(mSortAdapter);
 
+        // Still using loaders here. The scenario is simple and hasn't been fragile, so I'm not
+        // prioritizing unit testing it.
         getSupportLoaderManager().initLoader(HabitContract.ActivitySortQueryHelper.ACTIVITES_SORT_LOADER, null, this);
     }
 

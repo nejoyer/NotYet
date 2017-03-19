@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/habit_list_item_swipe_layout"
     app:drag_edge="left"
     app:show_mode="pull_out"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/help_historical"
+        android:id="@+id/habit_list_item_checkmark"
+        android:contentDescription="@string/habit_list_item_checkmark_content_description"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:padding="1dp"
@@ -16,44 +17,45 @@
         android:scaleType="centerInside"
         android:tint="@color/colorPrimaryDark"
         android:src="@drawable/ic_menu_done_holo_light"/>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/habit_list_item_date"
-        android:layout_weight="17"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/ListItemDate"
-        android:text="Mon Jun 3"/>
-    <TextView
-        android:id="@+id/habit_list_item_value"
-        android:layout_weight="10"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/ListItemStats"
-        android:text="30"/>
-    <TextView
-        android:id="@+id/habit_list_item_7"
-        android:layout_weight="10"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/ListItemStats"
-        android:text="35.5"/>
-    <TextView
-        android:id="@+id/habit_list_item_30"
-        android:layout_weight="10"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/ListItemStats"
-        android:text="40"/>
-    <TextView
-        android:id="@+id/habit_list_item_90"
-        android:layout_weight="10"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/ListItemStats"
-        android:text="45"/>
-</LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/habit_item_row_holder"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/habit_list_item_date"
+            android:layout_weight="17"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ListItemDate"
+            tools:text="Mon Jun 3"/>
+        <TextView
+            android:id="@+id/habit_list_item_value"
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ListItemStats"
+            tools:text="30"/>
+        <TextView
+            android:id="@+id/habit_list_item_7"
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ListItemStats"
+            tools:text="35.5"/>
+        <TextView
+            android:id="@+id/habit_list_item_30"
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ListItemStats"
+            tools:text="40"/>
+        <TextView
+            android:id="@+id/habit_list_item_90"
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ListItemStats"
+            tools:text="45"/>
+    </LinearLayout>
 </com.daimajia.swipe.SwipeLayout>

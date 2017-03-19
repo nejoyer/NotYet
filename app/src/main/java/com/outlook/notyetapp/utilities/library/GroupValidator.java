@@ -7,10 +7,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Neil on 2/6/2017.
- */
-
+// Utility to help you easily validate multiple field (with potentially different criteria)
+// all at once and determine if they are all valid or not.
 public class GroupValidator {
     private List<TextValidator> viewsRequiringValidation = new ArrayList<TextValidator>();
 

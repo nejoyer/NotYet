@@ -7,14 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
-import com.outlook.notyetapp.R;
-
+// ContentProvider of Habit data. Used for querying and updating the db with habit info.
 public class HabitProvider extends ContentProvider {
 
     private DBHelper mDBHelper = null;
+    private DateHelper mDateHelper = null;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     private static final SQLiteQueryBuilder activitiesHabitDataJoinQueryBuilder;
@@ -36,6 +35,7 @@ public class HabitProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mDBHelper = new DBHelper(getContext());
+        mDateHelper = new DateHelper(new SharedPreferencesManager(getContext()));
         return true;
     }
 
@@ -136,13 +136,14 @@ public class HabitProvider extends ContentProvider {
             }
             // content://com.outlook.notyetapp/activities/mostrecent
             case HabitContract.ACTIVITIES_MOST_RECENT: {
-                long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getContext().getString(R.string.pref_day_change_key), "0"));
+                //todo delete
+//                long offset = Long.parseLong(PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getContext().getString(R.string.pref_day_change_key), "0"));
                 retCursor = activitiesHabitDataJoinQueryBuilder.query(mDBHelper.getReadableDatabase(),
                         projection,
                         selection,
                         selectionArgs,
                         HabitContract.RecentDataQueryHelper.GROUP_BY_ACTIVITY_ID,
-                        HabitContract.RecentDataQueryHelper.getHavingStatement(offset),//having
+                        HabitContract.RecentDataQueryHelper.getHavingStatement(mDateHelper.getTodaysDBDate()),//having
                         sortOrder);
                 break;
             }
@@ -220,7 +221,7 @@ public class HabitProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        //todo
+
         getContext().getContentResolver().notifyChange(uri, null);
         db.close();
         return returnUri;
@@ -304,7 +305,7 @@ public class HabitProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        //todo
+
         if(rowsUpdated > 0)
             getContext().getContentResolver().notifyChange(uri, null);
         return rowsUpdated;

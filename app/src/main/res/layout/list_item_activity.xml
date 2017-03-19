@@ -20,13 +20,12 @@
             android:layout_weight="1"
             android:text="@string/hide_until_tomorrow"
             style="@style/ListItemStats"
-            android:gravity="center_vertical|right"
+            android:gravity="center_vertical|end"
             android:background="@color/colorBad" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="0"
-            android:layout_above="@+id/habit_data_footer_layout"
             android:background="@android:color/black" />
     </LinearLayout>
     <LinearLayout
@@ -47,7 +46,6 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_weight="0"
-            android:layout_above="@+id/habit_data_footer_layout"
             android:background="@android:color/black" />
     </LinearLayout>
     <LinearLayout
@@ -63,7 +61,6 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:layout_above="@+id/habit_data_footer_layout"
                 android:background="@android:color/black" />
             <LinearLayout
                 android:orientation="vertical"
@@ -153,13 +150,11 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:layout_above="@+id/habit_data_footer_layout"
                 android:background="@android:color/black" />
         </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_above="@+id/habit_data_footer_layout"
             android:background="@android:color/black" />
     </LinearLayout>
 </com.daimajia.swipe.SwipeLayout>

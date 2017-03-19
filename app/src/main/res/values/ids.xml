@@ -2,4 +2,6 @@
 <resources>
     <item type="id" name="habit_list_item_viewholder_tag" />
     <item type="id" name="habit_list_item_date_tag" />
+    <item type="id" name="update_habit_value_edit_text" />
+    <item type="id" name="add_more_history_edit_text" />
 </resources>

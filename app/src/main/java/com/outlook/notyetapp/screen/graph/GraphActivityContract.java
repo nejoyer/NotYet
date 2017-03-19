@@ -1,7 +1,5 @@
 package com.outlook.notyetapp.screen.graph;
 
-import android.net.Uri;
-
 import com.jjoe64.graphview.series.DataPoint;
 import com.outlook.notyetapp.utilities.library.Presenter;
 
@@ -15,6 +13,6 @@ public interface GraphActivityContract {
     }
     interface ActionListener extends Presenter{
         void xAxisChanged(double minX, double maxX);
-        void loadHabitData (Uri habitDataUriForActivity, float forecast);
+        void loadHabitData (long acitivityId, float forecast);
     }
 }

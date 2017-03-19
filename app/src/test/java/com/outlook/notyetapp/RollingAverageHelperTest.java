@@ -1,5 +1,7 @@
 package com.outlook.notyetapp;
 
+import com.outlook.notyetapp.utilities.RollingAverageHelper;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +17,6 @@ public class RollingAverageHelperTest {
         for (int i = 1; i<91;i++) {
             mHelper.PushNumber(i);
         }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
     }
 
     @Test

@@ -6,10 +6,7 @@ import android.widget.TextView;
 import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.utilities.library.TextValidator;
 
-/**
- * Created by Neil on 2/6/2017.
- */
-
+// Validate that the user has entered a valid value for the title of a habit.
 public class TitleValidator extends TextValidator {
 
     public TitleValidator(TextView textView, Context context) {

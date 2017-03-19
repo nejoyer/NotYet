@@ -2,10 +2,8 @@ package com.outlook.notyetapp.utilities.library;
 
 import com.daimajia.swipe.SwipeLayout;
 
-/**
- * Created by Neil on 11/18/2016.
- */
-
+// provide default implementation for most methods so that you don't have a bunch of empty methods
+// implemented in files with more complexity.
 public abstract class SwipeOpenListener implements SwipeLayout.SwipeListener {
     @Override
     public void onStartOpen(SwipeLayout layout) {}

@@ -1,6 +1,6 @@
 package com.outlook.notyetapp.perfTests;
 
-import com.outlook.notyetapp.RollingAverageHelper;
+import com.outlook.notyetapp.utilities.RollingAverageHelper;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,15 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Random;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
-/**
- * Created by Neil on 10/20/2016.
- */
-
 @RunWith(MockitoJUnitRunner.class)
 public class RollingAverageHelperPerfTest {
         private RollingAverageHelper mHelper;
@@ -26,11 +17,6 @@ public class RollingAverageHelperPerfTest {
         @Before
         public void setUp() throws Exception {
             mHelper = new RollingAverageHelper();
-
-        }
-
-        @After
-        public void tearDown() throws Exception {
 
         }
 

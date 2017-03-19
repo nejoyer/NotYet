@@ -4,7 +4,8 @@
     <application>
         <provider
             android:name="com.outlook.notyetapp.data.HabitProvider"
-            android:authorities="com.outlook.notyetapp" />
+            android:authorities="com.outlook.notyetapp"
+            android:exported="false"/>
     </application>
 
 </manifest>
