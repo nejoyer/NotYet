@@ -1,5 +1,6 @@
 package com.outlook.notyetapp.screen.habit;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -362,7 +363,10 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     public void renderBestData(String activityTitle, float best7, float best30, float best90) {
         mActivityTitle = activityTitle;
         if(!mIsTwoPane) {
-            getActivity().setTitle(activityTitle);
+            Activity activity = getActivity();
+            if(activity != null) {
+                getActivity().setTitle(activityTitle);
+            }
         }
         mFooterBest7.setText(CustomNumberFormatter.formatToThreeCharacters(best7));
         mFooterBest30.setText(CustomNumberFormatter.formatToThreeCharacters(best30));

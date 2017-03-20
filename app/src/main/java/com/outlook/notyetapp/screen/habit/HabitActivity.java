@@ -38,7 +38,7 @@ public class HabitActivity extends AppCompatActivity {
         AdView adView = (AdView) findViewById(R.id.habit_banner_ad);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .addTestDevice("***REMOVED***")
+                .addTestDevice("80FFA96B61CB6E6AC403A3FEBB8C90B0")
                 .build();
         adView.loadAd(adRequest);
     }
