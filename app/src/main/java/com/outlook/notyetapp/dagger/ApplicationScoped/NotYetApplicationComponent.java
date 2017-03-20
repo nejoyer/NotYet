@@ -7,6 +7,7 @@ import com.outlook.notyetapp.data.DateHelper;
 import com.outlook.notyetapp.data.HabitContractUriBuilder;
 import com.outlook.notyetapp.data.SharedPreferencesManager;
 import com.outlook.notyetapp.data.StorIOContentResolverHelper;
+import com.outlook.notyetapp.utilities.ContentProviderOperationFactory;
 import com.outlook.notyetapp.utilities.GraphUtilities;
 import com.outlook.notyetapp.utilities.rx.CursorToDataPointListHelper;
 import com.outlook.notyetapp.utilities.rx.RXMappingFunctionHelper;

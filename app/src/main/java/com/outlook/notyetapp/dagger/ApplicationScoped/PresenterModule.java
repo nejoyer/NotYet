@@ -8,6 +8,7 @@ import com.outlook.notyetapp.data.HabitContractUriBuilder;
 import com.outlook.notyetapp.data.SharedPreferencesManager;
 import com.outlook.notyetapp.data.StorIOContentResolverHelper;
 import com.outlook.notyetapp.factories.DataPointFactory;
+import com.outlook.notyetapp.utilities.ContentProviderOperationFactory;
 import com.outlook.notyetapp.utilities.RollingAverageHelper;
 import com.outlook.notyetapp.utilities.rx.CursorToDataPointListHelper;
 import com.outlook.notyetapp.utilities.rx.RXMappingFunctionHelper;
@@ -17,18 +18,6 @@ import com.outlook.notyetapp.utilities.rx.UpdateStatsHelper;
 
 import dagger.Module;
 import dagger.Provides;
-
-//import com.outlook.notyetapp.data.models.ActivitySettingsStorIOContentResolverDeleteResolver;
-//import com.outlook.notyetapp.data.models.ActivitySettingsStorIOContentResolverGetResolver;
-//import com.outlook.notyetapp.data.models.ActivitySettingsStorIOContentResolverPutResolver;
-//import com.outlook.notyetapp.data.models.HabitData;
-//import com.outlook.notyetapp.data.models.HabitDataOldestDate;
-//import com.outlook.notyetapp.data.models.HabitDataOldestDateStorIOContentResolverDeleteResolver;
-//import com.outlook.notyetapp.data.models.HabitDataOldestDateStorIOContentResolverGetResolver;
-//import com.outlook.notyetapp.data.models.HabitDataOldestDateStorIOContentResolverPutResolver;
-//import com.outlook.notyetapp.data.models.HabitDataStorIOContentResolverDeleteResolver;
-//import com.outlook.notyetapp.data.models.HabitDataStorIOContentResolverGetResolver;
-//import com.outlook.notyetapp.data.models.HabitDataStorIOContentResolverPutResolver;
 
 @Module(includes = {ContextModule.class, GraphModule.class})
 public class PresenterModule {
@@ -51,8 +40,9 @@ public class PresenterModule {
     @Provides
     @ApplicationScope
     public UpdateHabitDataHelper updateHabitDataHelper(HabitContractUriBuilder habitContractUriBuilder,
-                                                       StorIOContentResolverHelper storIOContentResolverHelper) {
-        return new UpdateHabitDataHelper(habitContractUriBuilder, storIOContentResolverHelper);
+                                                       StorIOContentResolverHelper storIOContentResolverHelper,
+                                                       ContentProviderOperationFactory contentProviderOperationFactory) {
+        return new UpdateHabitDataHelper(habitContractUriBuilder, storIOContentResolverHelper, contentProviderOperationFactory);
     }
 
     @Provides
@@ -90,7 +80,13 @@ public class PresenterModule {
 
     @Provides
     @ApplicationScope
-    public RollingAverageHelper tollingAverageHelper(){
+    public RollingAverageHelper rollingAverageHelper(){
         return new RollingAverageHelper();
+    }
+
+    @Provides
+    @ApplicationScope
+    public ContentProviderOperationFactory contentProviderOperationFactory(){
+        return new ContentProviderOperationFactory();
     }
 }

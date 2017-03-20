@@ -9,6 +9,7 @@ import android.os.RemoteException;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.data.HabitContractUriBuilder;
 import com.outlook.notyetapp.data.StorIOContentResolverHelper;
+import com.outlook.notyetapp.utilities.ContentProviderOperationFactory;
 import com.outlook.notyetapp.utilities.RollingAverageHelper;
 
 import java.util.ArrayList;
@@ -24,10 +25,14 @@ public class UpdateHabitDataHelper {
 
     private HabitContractUriBuilder habitContractUriBuilder;
     private StorIOContentResolverHelper storIOContentResolverHelper;
+    private ContentProviderOperationFactory contentProviderOperationFactory;
 
-    public UpdateHabitDataHelper(HabitContractUriBuilder habitContractUriBuilder, StorIOContentResolverHelper storIOContentResolverHelper) {
+    public UpdateHabitDataHelper(HabitContractUriBuilder habitContractUriBuilder,
+                                 StorIOContentResolverHelper storIOContentResolverHelper,
+                                 ContentProviderOperationFactory contentProviderOperationFactory) {
         this.habitContractUriBuilder = habitContractUriBuilder;
         this.storIOContentResolverHelper = storIOContentResolverHelper;
+        this.contentProviderOperationFactory = contentProviderOperationFactory;
     }
 
     public static class Params {
@@ -46,6 +51,7 @@ public class UpdateHabitDataHelper {
             this.mType = mType;
         }
 
+        //Added for unit test validation
         @Override
         public boolean equals(Object o) {
             if(o instanceof Params)
@@ -169,12 +175,12 @@ public class UpdateHabitDataHelper {
                                     }
 
                                     operations.add(
-                                            ContentProviderOperation.newUpdate(
+                                            contentProviderOperationFactory.getNewUpdate(
                                                     HabitContract.HabitDataEntry.buildHabitDataUriForHabitDataEntryId(
                                                             cursor.getLong(HabitContract.HabitDataQueryHelper.COLUMN_HABIT_ID)
-                                                    )
-                                            ).withValues(values)
-                                                    .build()
+                                                    ),
+                                                    values
+                                            )
                                     );
                                 }
                                 cursor.moveToNext();
