@@ -349,30 +349,31 @@ public class MainActivity extends AppCompatActivity implements MainMenuFragment.
                 @Override
                 public void run() {
                     View createButton = findViewById(R.id.action_create_new_activity);
+                    if(createButton != null) {
+                        boolean animated = true;
+                        //Try to animate it bouncing unless we know they've tried to turn off animation.
+                        if (Build.VERSION.SDK_INT >= 17) {
+                            animated = Settings.System.getFloat(getContentResolver(), Settings.Global.ANIMATOR_DURATION_SCALE, 0) != 0;
+                        }
 
-                    boolean animated = true;
-                    //Try to animate it bouncing unless we know they've tried to turn off animation.
-                    if (Build.VERSION.SDK_INT >= 17) {
-                        animated = Settings.System.getFloat(getContentResolver(), Settings.Global.ANIMATOR_DURATION_SCALE, 0) != 0;
+                        new SimpleTooltip.Builder(MainActivity.this)
+                                .anchorView(createButton)
+                                .contentView(R.layout.hero_tooltip, R.id.tooltip_text)
+                                .text(getString(R.string.no_activities_new_user_hero))
+                                .gravity(Gravity.BOTTOM)
+                                .animated(animated)
+                                .transparentOverlay(false)
+                                .onDismissListener(
+                                        new SimpleTooltip.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss(SimpleTooltip tooltip) {
+                                                mShouldShowHeroToolTip = false;
+                                                mSharedPreferencesManager.setShouldShowHeroToolTip(mShouldShowHeroToolTip);
+                                            }
+                                        })
+                                .build()
+                                .show();
                     }
-
-                    new SimpleTooltip.Builder(MainActivity.this)
-                            .anchorView(createButton)
-                            .contentView(R.layout.hero_tooltip, R.id.tooltip_text)
-                            .text(getString(R.string.no_activities_new_user_hero))
-                            .gravity(Gravity.BOTTOM)
-                            .animated(animated)
-                            .transparentOverlay(false)
-                            .onDismissListener(
-                                    new SimpleTooltip.OnDismissListener() {
-                                        @Override
-                                        public void onDismiss(SimpleTooltip tooltip) {
-                                            mShouldShowHeroToolTip = false;
-                                            mSharedPreferencesManager.setShouldShowHeroToolTip(mShouldShowHeroToolTip);
-                                        }
-                                    })
-                            .build()
-                            .show();
                 }
             }, 500);
 
