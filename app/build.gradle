@@ -30,8 +30,8 @@ android {
         }
         production {
             applicationId "com.outlook.notyetapp"
-            versionCode 5
-            versionName '1.0.1'
+            versionCode 8
+            versionName '1.0.3'
         }
     }
 //    buildToolsVersion '25.0.0'
@@ -72,7 +72,6 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4:1.6.6'
     testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.6'
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.6'
-
     //There was a version mismatch for this hidden dependency, force test to take the newer one.
     androidTestCompile 'com.android.support:support-annotations:24.2.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
