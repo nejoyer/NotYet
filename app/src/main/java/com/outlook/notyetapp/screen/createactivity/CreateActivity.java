@@ -71,7 +71,7 @@ public class CreateActivity extends AppCompatActivity implements DoneCancelFragm
     //Called by DoneCancelFragment
     @Override
     public void doneClicked() {
-        mPresenter.doneClicked(mActivitySettingsFragment.getSettingsFromUI());
+        mPresenter.doneClicked(mActivitySettingsFragment);
     }
 
     //Called by DoneCancelFragment

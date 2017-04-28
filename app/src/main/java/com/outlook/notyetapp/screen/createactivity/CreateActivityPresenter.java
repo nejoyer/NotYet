@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.database.SQLException;
 import android.net.Uri;
 
+import com.outlook.notyetapp.ActivitySettingsFragment;
 import com.outlook.notyetapp.NotYetApplication;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.data.StorIOContentResolverHelper;
+import com.outlook.notyetapp.data.models.ActivitySettings;
 import com.outlook.notyetapp.utilities.AnalyticsConstants;
 import com.outlook.notyetapp.utilities.rx.RecentDataHelper;
 
@@ -27,9 +29,10 @@ public class CreateActivityPresenter implements CreateActivityContract.ActionLis
     }
 
     @Override
-    public void doneClicked(ContentValues contentValues) {
+    public void doneClicked(ActivitySettingsFragment activitySettingsFragment) {
         if(view.validate())
         {
+            ContentValues contentValues = activitySettingsFragment.getSettingsFromUI();
             contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST7, contentValues.getAsFloat(HabitContract.ActivitiesEntry.COLUMN_HISTORICAL));
             contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST30, contentValues.getAsFloat(HabitContract.ActivitiesEntry.COLUMN_HISTORICAL));
             contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST90, contentValues.getAsFloat(HabitContract.ActivitiesEntry.COLUMN_HISTORICAL));

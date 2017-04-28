@@ -1,6 +1,6 @@
 package com.outlook.notyetapp.screen.createactivity;
 
-import android.content.ContentValues;
+import com.outlook.notyetapp.ActivitySettingsFragment;
 
 public interface CreateActivityContract {
     interface View{
@@ -9,6 +9,6 @@ public interface CreateActivityContract {
         void closeActivity();
     }
     interface ActionListener {
-        void doneClicked(ContentValues contentValues);
+        void doneClicked(ActivitySettingsFragment activitySettingsFragment);
     }
 }
