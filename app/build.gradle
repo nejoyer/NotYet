@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion 28
+    buildToolsVersion '28.0.0'
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
@@ -22,6 +21,7 @@ android {
             pseudoLocalesEnabled true
         }
     }
+    flavorDimensions "default"
     productFlavors {
         demo {
             applicationId "com.outlook.notyetapp.demo"
@@ -35,48 +35,48 @@ android {
         }
     }
 //    buildToolsVersion '25.0.0'
-    buildToolsVersion '25'
+    buildToolsVersion '28.0.3'
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':AndroidSwipeLayout')
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
-    compile 'com.jjoe64:graphview:4.2.0'
-    compile 'com.vandalsoftware.android:dslv:0.6.3'
-    compile 'com.github.douglasjunior:android-simple-tooltip:0.1.2'
-    compile 'com.android.support:recyclerview-v7:21.0.0'
-    compile 'com.android.support:support-vector-drawable:23.4.0'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'com.google.firebase:firebase-ads:10.0.1'
-    compile 'com.google.dagger:dagger:2.8'
-    apt 'com.google.dagger:dagger-compiler:2.8'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'io.reactivex:rxjava:1.2.5'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'com.pushtorefresh.storio:sqlite:1.12.1'
-    compile 'com.pushtorefresh.storio:content-resolver:1.12.1'
-    compile 'com.pushtorefresh.storio:sqlite-annotations:1.12.1'
-    compile 'com.pushtorefresh.storio:content-resolver-annotations:1.12.1'
-    apt 'com.pushtorefresh.storio:sqlite-annotations-processor:1.12.1'
-    apt 'com.pushtorefresh.storio:content-resolver-annotations-processor:1.12.1'
-    testCompile 'org.robolectric:robolectric:3.2.2'
-    testCompile 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.powermock:powermock-core:1.6.6'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.6'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.6'
-    testCompile 'org.powermock:powermock-module-junit4-rule-agent:1.6.6'
-    testCompile 'org.powermock:powermock-module-junit4-rule:1.6.6'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':AndroidSwipeLayout')
+    api 'com.android.support:appcompat-v7:28.0.0'
+    api 'com.android.support:design:28.0.0'
+    api 'com.android.support:support-v4:28.0.0'
+    api 'com.jjoe64:graphview:4.2.0'
+    api 'com.vandalsoftware.android:dslv:0.6.3'
+    api 'com.github.douglasjunior:android-simple-tooltip:0.1.2'
+    api 'com.android.support:recyclerview-v7:28.0.0'
+    api 'com.android.support:support-vector-drawable:28.0.0'
+    api 'com.google.firebase:firebase-core:10.0.1'
+    api 'com.google.firebase:firebase-crash:10.0.1'
+    api 'com.google.firebase:firebase-ads:10.0.1'
+    api 'com.google.dagger:dagger:2.8'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.8'
+    api 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    api 'io.reactivex:rxjava:1.2.5'
+    api 'io.reactivex:rxandroid:1.2.1'
+    api 'com.pushtorefresh.storio:sqlite:1.12.1'
+    api 'com.pushtorefresh.storio:content-resolver:1.12.1'
+    api 'com.pushtorefresh.storio:sqlite-annotations:1.12.1'
+    api 'com.pushtorefresh.storio:content-resolver-annotations:1.12.1'
+    annotationProcessor 'com.pushtorefresh.storio:sqlite-annotations-processor:1.12.1'
+    annotationProcessor 'com.pushtorefresh.storio:content-resolver-annotations-processor:1.12.1'
+    testImplementation 'org.robolectric:robolectric:3.2.2'
+    testImplementation 'org.khronos:opengl-api:gl1.1-android-2.1_r1'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'org.powermock:powermock-core:1.6.6'
+    testImplementation 'org.powermock:powermock-api-mockito:1.6.6'
+    testImplementation 'org.powermock:powermock-module-junit4:1.6.6'
+    testImplementation 'org.powermock:powermock-module-junit4-rule-agent:1.6.6'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.6.6'
     //There was a version mismatch for this hidden dependency, force test to take the newer one.
-    androidTestCompile 'com.android.support:support-annotations:24.2.1'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-web:2.2.2'
+    androidTestImplementation 'com.android.support:support-annotations:24.2.1'
+    androidTestImplementation 'com.android.support.test:runner:0.5'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-web:2.2.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

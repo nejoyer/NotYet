@@ -1,0 +1,7 @@
+*.iml
+local.properties
+.gradle/
+.idea/
+.vs/
+AndroidSwipeLayout/build/
+app/build/
