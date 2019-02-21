@@ -7,6 +7,7 @@ import com.outlook.notyetapp.screen.habit.HabitActivityFragmentContract;
 import com.outlook.notyetapp.screen.habit.HabitActivityFragmentPresenter;
 import com.outlook.notyetapp.utilities.rx.CursorToDataPointListHelper;
 import com.outlook.notyetapp.utilities.rx.RXMappingFunctionHelper;
+import com.outlook.notyetapp.utilities.rx.RecentDataHelper;
 import com.outlook.notyetapp.utilities.rx.UpdateHabitDataHelper;
 import com.outlook.notyetapp.utilities.rx.UpdateStatsHelper;
 
