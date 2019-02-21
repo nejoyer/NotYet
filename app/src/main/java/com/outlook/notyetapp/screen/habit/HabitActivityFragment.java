@@ -56,6 +56,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.exceptions.Exceptions;
+import rx.observers.AsyncCompletableSubscriber;
 
 // Used in both MainActivity and HabitActivity
 // functionality to show graph and list view of data for a specific habit.
@@ -205,6 +208,8 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
                                 mPresenter.unsubscribe();
 
                                 getActivity().getContentResolver().delete(
+                                        HabitContract.HabitDataEntry.buildUriForAllHabitDataForActivityId(mActivityId), null, null);
+                                getActivity().getContentResolver().delete(
                                         HabitContract.ActivitiesEntry.buildActivityUri(mActivityId), null, null);
 
                                 NotYetApplication.logFirebaseAnalyticsEvent(AnalyticsConstants.EventNames.HABIT_DELETED);
@@ -214,12 +219,28 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
 
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
+                return true;
+            case R.id.action_habit_reset:
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(getString(R.string.reset_habit_dialog_title))
+                        .setMessage(getString(R.string.reset_habit_dialog_message))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
+                                mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                        Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                                mPresenter.resetAllHabitData(mActivityId);
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 
     // Footer to add a longer history (if the user has been keeping track of data before beginning to use the app).
     @OnClick(R.id.add_more_history_layout)
@@ -337,8 +358,13 @@ public class HabitActivityFragment extends Fragment implements HabitActivityFrag
     }
 
     @Override
+    public void showHabitResetToast() {
+        Toast.makeText(getActivity(), getString(R.string.reset_habit_completed_toast), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void renderHabitDataToGraph(List<DataPoint[]> data) {
-        if(data.size() > 0) {
+        if(data != null && data.size() > 0) {
             mGraphUtilities.AddSeriesFromData(mGraph, data);
 
             DataPoint[] valDataPoints = data.get(0);

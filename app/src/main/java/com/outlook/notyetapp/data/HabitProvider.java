@@ -244,6 +244,14 @@ public class HabitProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 break;
             }
+            // content://com.outlook.notyetapp/activities/#/habitdata
+            case HabitContract.ACTIVITY_HABITDATA_ENTRIES: {
+                long activityId = HabitContract.ActivitiesEntry.getActivityNumberFromUri(uri);
+                whereClause = HabitContract.HabitDataEntry.COLUMN_ACTIVITY_ID + " = ?";
+                db.delete(HabitContract.HabitDataEntry.TABLE_NAME, whereClause, new String[]{String.valueOf(activityId)});
+                Uri uriToNotify = HabitContract.HabitDataEntry.buildUriForAllHabitDataForActivityId(activityId);
+                getContext().getContentResolver().notifyChange(uriToNotify, null);
+            }
         }
         return 0;
     }

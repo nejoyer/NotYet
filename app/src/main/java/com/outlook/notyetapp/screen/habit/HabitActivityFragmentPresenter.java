@@ -1,8 +1,12 @@
 package com.outlook.notyetapp.screen.habit;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.series.DataPoint;
+import com.outlook.notyetapp.R;
 import com.outlook.notyetapp.data.DateHelper;
 import com.outlook.notyetapp.data.HabitContract;
 import com.outlook.notyetapp.data.HabitContractUriBuilder;
@@ -11,12 +15,14 @@ import com.outlook.notyetapp.data.models.ActivitySettings;
 import com.outlook.notyetapp.screen.habit.HabitActivityFragmentContract.ActionListener;
 import com.outlook.notyetapp.utilities.rx.CursorToDataPointListHelper;
 import com.outlook.notyetapp.utilities.rx.RXMappingFunctionHelper;
+import com.outlook.notyetapp.utilities.rx.RecentDataHelper;
 import com.outlook.notyetapp.utilities.rx.UpdateHabitDataHelper;
 import com.outlook.notyetapp.utilities.rx.UpdateStatsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.Single;
 import rx.Subscriber;
 import rx.Subscription;
@@ -31,6 +37,7 @@ public class HabitActivityFragmentPresenter implements ActionListener {
     private HabitActivityFragmentContract.View view;
     private CursorToDataPointListHelper cursorToDataPointListHelper;
     private UpdateHabitDataHelper updateHabitDataHelper;
+    private RecentDataHelper recentDataHelper;
     private UpdateStatsHelper updateStatsHelper;
     private HabitContractUriBuilder habitContractUriBuilder;
     private StorIOContentResolverHelper storIOContentResolverHelper;
@@ -46,6 +53,7 @@ public class HabitActivityFragmentPresenter implements ActionListener {
     public HabitActivityFragmentPresenter(HabitActivityFragmentContract.View view,
                                           CursorToDataPointListHelper cursorToDataPointListHelper,
                                           UpdateHabitDataHelper updateHabitDataHelper,
+                                          RecentDataHelper recentDataHelper,
                                           UpdateStatsHelper updateStatsHelper,
                                           HabitContractUriBuilder habitContractUriBuilder,
                                           StorIOContentResolverHelper storIOContentResolverHelper,
@@ -54,6 +62,7 @@ public class HabitActivityFragmentPresenter implements ActionListener {
         this.view = view;
         this.cursorToDataPointListHelper = cursorToDataPointListHelper;
         this.updateHabitDataHelper = updateHabitDataHelper;
+        this.recentDataHelper = recentDataHelper;
         this.updateStatsHelper = updateStatsHelper;
         this.habitContractUriBuilder = habitContractUriBuilder;
         this.storIOContentResolverHelper = storIOContentResolverHelper;
@@ -227,6 +236,52 @@ public class HabitActivityFragmentPresenter implements ActionListener {
     @Override
     public void multiSelectCancelClicked(long activityId) {
         storIOContentResolverHelper.notifyChangeAtUri(habitContractUriBuilder.buildHabitDataUriForActivity(activityId));
+    }
+
+    @Override
+    public void resetAllHabitData(final long activityId){
+        storIOContentResolverHelper.getContentResolver().delete(
+        HabitContract.HabitDataEntry.buildUriForAllHabitDataForActivityId(activityId), null, null);
+
+        Cursor activitySettingsCursor = storIOContentResolverHelper.getContentResolver().query(
+                habitContractUriBuilder.buildActivityUri(activityId),//Uri
+                HabitContract.ActivitySettingsQueryHelper.ACTIVITY_SETTINGS_PROJECTION,//projection
+                null,//selection
+                null,//selectionArgs
+                null//Sort Order
+        );
+        activitySettingsCursor.moveToFirst();
+        float historical = activitySettingsCursor.getFloat(HabitContract.ActivitySettingsQueryHelper.COLUMN_HISTORICAL);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST7, historical);
+        contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST30, historical);
+        contentValues.put(HabitContract.ActivitiesEntry.COLUMN_BEST90, historical);
+
+        storIOContentResolverHelper.getContentResolver().update(
+                habitContractUriBuilder.buildActivityUri(activityId), contentValues, null, null
+        );
+
+        Observable.just(new RecentDataHelper.Params(
+                activityId,
+                historical,
+                HabitContract.HabitDataEntry.HabitValueType.HISTORICAL))
+                .compose(this.recentDataHelper.getRecentDataTransformer())
+                .toCompletable()
+                .subscribe(new AsyncCompletableSubscriber() {
+                               @Override
+                               public void onCompleted() {
+                                   view.showHabitResetToast();
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+                                   throw Exceptions.propagate(e);
+                               }
+                           }
+                );
+
+
     }
 
     // Since these subscriptions are ongoing (receiving updates to keep the UI updated)
