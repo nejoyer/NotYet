@@ -89,6 +89,8 @@ public class RecentDataHelper {
                                                         RecentDataHelper.this.storIOContentResolverHelper.getContentResolver()
                                                                 .bulkInsert(habitContractUriBuilder.getHabitDataEntryUri(), contentValues);
                                                         RecentDataHelper.this.storIOContentResolverHelper
+                                                                .notifyChangeAtUri(habitContractUriBuilder.buildHabitDataUriForActivity(recentDataParams.activityId));
+                                                        RecentDataHelper.this.storIOContentResolverHelper
                                                                 .notifyChangeAtUri(habitContractUriBuilder.buildActivitiesStatsUri());
 
                                                         return null;

@@ -44,6 +44,9 @@ public class CursorToDataPointListHelper {
                             @Override
                             public List<DataPoint[]> call(Cursor cursor) {
                                 int cursorCount = cursor.getCount();
+                                if(cursorCount == 0){
+                                    return null;
+                                }
 
                                 int dataPointCount;
                                 //On the GraphActivity, we show 90 days of the future.

@@ -9,4 +9,8 @@
         android:id="@+id/action_habit_delete"
         android:title="@string/action_habit_delete"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_habit_reset"
+        android:title="@string/action_habit_reset"
+        app:showAsAction="never"/>
 </menu>

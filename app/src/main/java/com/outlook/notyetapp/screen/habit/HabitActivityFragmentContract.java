@@ -12,6 +12,7 @@ public class HabitActivityFragmentContract {
     public interface View{
         void renderHabitDataToGraph(List<DataPoint[]> data);
         void renderHabitDataToList(Cursor data);
+        void showHabitResetToast();
         void renderBestData(String activityTitle, float best7, float best30, float best90);
         void showMultiSelectDialog();
         void currentForecastData(float forecast);
@@ -22,6 +23,7 @@ public class HabitActivityFragmentContract {
     }
     public interface ActionListener extends Presenter, HabitDataAdapter.ChecksChangedListener {
         void subscribeToHabitDataAndBestData(long activityId);
+        void resetAllHabitData(long activityId);
         void addMoreHistoryClicked();
         void addMoreHistoryDialogOKClicked(long activityId, int numberOfDaysToAdd);
         void updateHabitDataClicked(long activityId, long dateToUpdate, float newVal);
